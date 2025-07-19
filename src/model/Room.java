@@ -1,9 +1,9 @@
 package model;
 
 public class Room implements IRoom {
-    String roomNumber;
-    Double price;
-    RoomType enumeration;
+    private final String roomNumber;
+    private final Double price;
+    private final RoomType enumeration;
 
     public Room(String roomNumber, Double price, RoomType enumeration) {
         this.roomNumber = roomNumber;
