@@ -6,6 +6,12 @@ import model.IRoom;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * For the hotel staff only.
+ * Used for defining the API.
+ * Has little to no behavior.
+ * Makes use of the Service classes to implement its methods.
+ */
 public class AdminResource {
     private static final AdminResource instance = new AdminResource();
 

@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+/**
+ * Stateful service.
+ */
 public class ReservationService {
     private static final ReservationService instance = new ReservationService();
 

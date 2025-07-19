@@ -7,6 +7,12 @@ import model.Reservation;
 import java.util.Collection;
 import java.util.Date;
 
+/**
+ * For public usage.
+ * Used for defining the API.
+ * Has little to no behavior.
+ * Makes use of the Service classes to implement its methods.
+ */
 public class HotelResource {
     private static final HotelResource instance = new HotelResource();
 

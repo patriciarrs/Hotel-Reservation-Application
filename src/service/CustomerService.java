@@ -4,6 +4,9 @@ import model.Customer;
 
 import java.util.Collection;
 
+/**
+ * Stateful service.
+ */
 public class CustomerService {
     private static final CustomerService instance = new CustomerService();
 
