@@ -2,19 +2,29 @@ package model;
 
 import java.util.Date;
 
+/**
+ * Represents a customer reservation of a hotel room. Provides its properties.
+ */
 public class Reservation {
-    private Customer customer;
-    private IRoom room;
-    private Date checkInDate;
-    private Date checkOutDate;
+    private final Customer customer;
+    private final IRoom room;
+    private final Date checkIn;
+    private final Date checkOut;
+
+    public Reservation(Customer customer, IRoom room, Date checkIn, Date checkOut) {
+        this.customer = customer;
+        this.room = room;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+    }
 
     @Override
     public String toString() {
         return "Reservation{" +
                 "customer=" + customer +
                 ", room=" + room +
-                ", checkInDate=" + checkInDate +
-                ", checkOutDate=" + checkOutDate +
+                ", checkIn=" + checkIn +
+                ", checkOut=" + checkOut +
                 '}';
     }
 }

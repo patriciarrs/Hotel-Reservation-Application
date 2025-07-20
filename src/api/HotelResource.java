@@ -3,27 +3,55 @@ package api;
 import model.Customer;
 import model.IRoom;
 import model.Reservation;
+import service.CustomerService;
+import service.ReservationService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
 /**
- * For public usage.
- * Used for defining the API.
- * Has little to no behavior.
- * Makes use of the Service classes to implement its methods.
+ * Singleton resource responsible for loading and providing hotel configuration settings (for public usage).
+ * <p>
+ * Used for defining the API. Has little to no behavior. Makes use of the Service classes to implement its methods.
+ * <p>
+ * Loads configuration from a predefined source (e.g., a service) at startup and provides read-only access throughout
+ * the application lifecycle.
+ * </p>
+ * This class is a singleton and should be accessed via {@link #getInstance()}.
  */
 public class HotelResource {
     private static final HotelResource instance = new HotelResource();
+    //private final Collection<Reservation> reservations;
+    private final Collection<Customer> customers;
+
+    private final ArrayList hotelRooms;
 
     private HotelResource() {
+        this.hotelRooms = new ArrayList<>(Arrays.asList("A", "B", "C"));
+        CustomerService customerService = CustomerService.getInstance();
+        ReservationService reservationService = ReservationService.getInstance();
 
+        //this.reservations = reservationService.getCustomerReservations();
+        this.customers = customerService.getAllCustomers();
     }
 
+    /**
+     * Returns the singleton instance of {@code HotelResource}.
+     *
+     * @return the global hotel manager.
+     */
     public HotelResource getInstance() {
         return instance;
     }
 
+    /**
+     * Get a customer.
+     *
+     * @param email the customer email.
+     * @return the customer.
+     */
     public Customer getCustomer(String email) {
         return null;
     }

@@ -1,42 +1,53 @@
 package model;
 
+/**
+ * Represents a room in the hotel.
+ * Provides methods for getting properties.
+ */
 public class Room implements IRoom {
-    private final String roomNumber;
+    private final String number;
     private final Double price;
-    private final RoomType enumeration;
+    private final RoomType type;
 
-    public Room(String roomNumber, Double price, RoomType enumeration) {
-        this.roomNumber = roomNumber;
+    /**
+     * Creates a room with the specified number, price and type.
+     *
+     * @param number the room number.
+     * @param price  the room price.
+     * @param type   the room type.
+     */
+    public Room(String number, Double price, RoomType type) {
+        this.number = number;
         this.price = price;
-        this.enumeration = enumeration;
+        this.type = type;
     }
 
     @Override
-    public String getRoomNumber() {
-        return roomNumber;
+    public String getNumber() {
+        return number;
     }
 
     @Override
-    public Double getRoomPrice() {
+    public Double getPrice() {
         return price;
     }
 
     @Override
-    public RoomType getRoomType() {
-        return enumeration;
+    public RoomType getType() {
+        return type;
     }
 
     @Override
     public boolean isFree() {
-        return false;
+        return false; // TODO
     }
 
     @Override
     public String toString() {
         return "model.Room{" +
-                "roomNumber='" + roomNumber + '\'' +
+                "number='" + number + '\'' +
                 ", price=" + price +
-                ", enumeration=" + enumeration +
+                ", type=" + type +
                 '}';
     }
 }

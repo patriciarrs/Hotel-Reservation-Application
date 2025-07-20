@@ -3,11 +3,23 @@ package model;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Represents a customer of the hotel.
+ * Provides its properties.
+ */
 public class Customer {
     private final String firstName;
     private final String lastName;
     private final String email;
 
+    /**
+     * Creates a customer with the specified first and last name and email.
+     *
+     * @param firstName the customer first name.
+     * @param lastName  the customer last name.
+     * @param email     the customer email.
+     * @throws IllegalArgumentException if the email is not valid.
+     */
     public Customer(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
