@@ -6,6 +6,7 @@ import model.Reservation;
 import service.CustomerService;
 import service.ReservationService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,7 +43,7 @@ public class HotelResource {
      *
      * @return the global hotel manager.
      */
-    public HotelResource getInstance() {
+    public static HotelResource getInstance() {
         return instance;
     }
 
@@ -63,7 +64,7 @@ public class HotelResource {
         return null;
     }
 
-    public Reservation bookARoom(String customerEmail, IRoom room, Date checkInDate, Date checkOutDate) {
+    public Reservation reserveARoom(String customerEmail, IRoom room, Date checkInDate, Date checkOutDate) {
         return null;
     }
 
@@ -71,7 +72,14 @@ public class HotelResource {
         return null;
     }
 
-    public Collection<IRoom> findARoom(Date checkIn, Date checkOut) {
-        return null;
+    /**
+     * Find the available rooms for reservation given the check-in and check-out dates.
+     *
+     * @param checkIn  the check-in date.
+     * @param checkOut the check-out date.
+     * @return the available rooms.
+     */
+    public Collection<IRoom> findAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
+        return null; // TODO
     }
 }
