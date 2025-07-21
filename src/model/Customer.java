@@ -4,8 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Represents a customer of the hotel.
- * Provides its properties.
+ * Represents a customer of the hotel. Provides its properties.
  */
 public class Customer {
     private final String firstName;
@@ -20,7 +19,7 @@ public class Customer {
      * @param email     the customer email.
      * @throws IllegalArgumentException if the email is not valid.
      */
-    public Customer(String firstName, String lastName, String email) {
+    public Customer(String firstName, String lastName, String email) throws IllegalArgumentException {
         this.firstName = firstName;
         this.lastName = lastName;
 
@@ -30,7 +29,8 @@ public class Customer {
         boolean isEmailValid = matcher.matches();
 
         if (!isEmailValid) {
-            throw new IllegalArgumentException("The email should look like 'name@domain.extension' (e.g., user@example.com).");
+            throw new IllegalArgumentException(
+                    "The email should look like 'name@domain.extension' (e.g., user@example.com).");
         }
 
         this.email = email;
