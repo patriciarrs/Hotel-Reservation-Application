@@ -2,8 +2,11 @@ package ui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.InputMismatchException;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
+import java.util.function.Predicate;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * Main menu for the users who want to book a room.
@@ -32,8 +35,6 @@ public class MainMenu {
         Scanner scanner = new Scanner(System.in);
 
         handleMenuOptionSelections(scanner, selectOptionMessage);
-
-        scanner.close();
     }
 
     /**
@@ -41,50 +42,38 @@ public class MainMenu {
      *
      * @param scanner             the text scanner input.
      * @param selectOptionMessage the message for selecting an option.
-     * @throws InputMismatchException   if the selected option is not a number.
-     * @throws IllegalArgumentException if the selected option does not exist.
+     * @throws IllegalArgumentException if the selected option is not an integer, or does not exist.
      */
     private void handleMenuOptionSelections(Scanner scanner, String selectOptionMessage)
-            throws InputMismatchException, IllegalArgumentException {
-        boolean isInputValid = false;
+            throws IllegalArgumentException {
+        boolean isInputValid;
 
-        while (!isInputValid) {
+        do {
             try {
-                int option = scanner.nextInt();
+                String input = scanner.nextLine();
+                int intInput = parseInt(input);
 
-                if (option < 1 || option > 5) {
+                if (intInput < 1 || intInput > 5) {
                     throw new IllegalArgumentException(selectOptionMessage);
                 }
 
                 isInputValid = true;
-                scanner.nextLine(); // throw away the \n not consumed by nextInt()
 
-                switch (option) {
-                    case 1:
-                        findAndReserveARoom(scanner);
-                        break;
-                    case 2:
-                        System.out.println("2");
-                        break;
-                    case 3:
-                        System.out.println("3");
-                        break;
-                    case 4:
-                        System.out.println("4");
-                        break;
-                    case 5:
-                        scanner.close();
+                switch (intInput) {
+                    case 1 -> findAndReserveARoom(scanner);
+                    case 2 -> System.out.println("2");
+                    case 3 -> System.out.println("3");
+                    case 4 -> System.out.println("4");
+                    case 5 -> scanner.close();
                 }
-            } catch (InputMismatchException | IllegalArgumentException e) {
-                scanner.nextLine(); // throw away the \n not consumed by nextInt()
+            } catch (IllegalArgumentException e) {
                 System.out.println(selectOptionMessage);
                 isInputValid = false;
             } catch (Exception e) {
-                scanner.nextLine(); // throw away the \n not consumed by nextInt()
-                System.out.println(e.getMessage());
+                System.out.println(e.getLocalizedMessage());
                 isInputValid = false;
             }
-        }
+        } while (!isInputValid);
     }
 
     /**
@@ -124,25 +113,13 @@ public class MainMenu {
      * @param scanner   the text scanner input.
      * @param formatter the date formatter.
      * @return the check-in date.
-     * @throws IllegalArgumentException if the check-in date is before today.
      */
-    private LocalDate getCheckInDate(Scanner scanner, DateTimeFormatter formatter) throws IllegalArgumentException {
-        while (true) {
-            try {
-                System.out.println("Enter check-in date as yyyy/MM/dd (e.g., 2026/01/01)");
-                String checkInInput = scanner.nextLine();
+    private LocalDate getCheckInDate(Scanner scanner, DateTimeFormatter formatter) {
+        String inputMessage = "Enter check-in date as yyyy/MM/dd (e.g., 2026/01/01).";
+        Predicate<LocalDate> inputValidation = date -> date.isAfter(LocalDate.now());
+        String errorMessage = "Enter a check-in date in the future.";
 
-                LocalDate checkIn = LocalDate.parse(checkInInput, formatter);
-
-                if (checkIn.isBefore(LocalDate.now())) {
-                    throw new IllegalArgumentException("Enter a check-in date in the future.");
-                }
-
-                return checkIn;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
+        return getDate(scanner, formatter, inputMessage, inputValidation, errorMessage);
     }
 
     /**
@@ -152,26 +129,13 @@ public class MainMenu {
      * @param formatter   the date formatter.
      * @param checkInDate the check-in date.
      * @return the check-out date.
-     * @throws IllegalArgumentException if the check-out date is before the check-in date.
      */
-    private LocalDate getCheckOutDate(Scanner scanner, DateTimeFormatter formatter, LocalDate checkInDate)
-            throws IllegalArgumentException {
-        while (true) {
-            try {
-                System.out.println("Enter check-out date as yyyy/MM/dd (e.g., 2026/01/15)");
-                String checkOutInput = scanner.nextLine();
+    private LocalDate getCheckOutDate(Scanner scanner, DateTimeFormatter formatter, LocalDate checkInDate) {
+        String inputMessage = "Enter check-out date as yyyy/MM/dd (e.g., 2026/01/15).";
+        Predicate<LocalDate> inputValidation = date -> date.isAfter(checkInDate);
+        String errorMessage = "Enter a check-out date that is after the check-in.";
 
-                LocalDate checkOut = LocalDate.parse(checkOutInput, formatter);
-
-                if (checkOut.isBefore(checkInDate)) {
-                    throw new IllegalArgumentException("Enter a check-out date that is after the check-in.");
-                }
-
-                return checkOut;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
+        return getDate(scanner, formatter, inputMessage, inputValidation, errorMessage);
     }
 
     /**
@@ -179,5 +143,40 @@ public class MainMenu {
      */
     private void reserveARoom() {
         System.out.println("Do you have and account with us? y/n");
+    }
+
+    /**
+     * Get a valid date.
+     *
+     * @param scanner         the text scanner input.
+     * @param formatter       the date formatter.
+     * @param inputMessage    the message that asks for the user input.
+     * @param inputValidation single argument function that validates the input.
+     * @param errorMessage    message to show if the input is invalid.
+     * @return the valid input date.
+     * @throws DateTimeParseException   if the input date format is invalid.
+     * @throws IllegalArgumentException if the input date is invalid.
+     */
+    private LocalDate getDate(Scanner scanner, DateTimeFormatter formatter, String inputMessage,
+                              Predicate<LocalDate> inputValidation, String errorMessage)
+            throws DateTimeParseException, IllegalArgumentException {
+        System.out.println(inputMessage);
+
+        while (true) {
+            try {
+                String input = scanner.nextLine();
+                LocalDate dateInput = LocalDate.parse(input, formatter);
+
+                if (!inputValidation.test(dateInput)) {
+                    throw new IllegalArgumentException(errorMessage);
+                }
+
+                return dateInput;
+            } catch (DateTimeParseException e) {
+                System.out.println(inputMessage);
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+        }
     }
 }
