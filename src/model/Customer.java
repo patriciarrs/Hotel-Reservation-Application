@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 /**
  * Represents a customer of the hotel. Provides its properties.
  */
-public class Customer {
+final public class Customer {
     private final String firstName;
     private final String lastName;
     private final String email;
@@ -23,8 +23,8 @@ public class Customer {
         this.firstName = firstName;
         this.lastName = lastName;
 
-        String emailRegex = "^(.+)@(.+).(.+)$";
-        Pattern pattern = Pattern.compile(emailRegex);
+        final String emailRegex = "^(.+)@(.+).(.+)$";
+        final Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(email);
         boolean isEmailValid = matcher.matches();
 

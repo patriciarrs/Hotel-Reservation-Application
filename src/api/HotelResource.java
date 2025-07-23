@@ -7,8 +7,6 @@ import service.CustomerService;
 import service.ReservationService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
@@ -22,20 +20,15 @@ import java.util.Date;
  * </p>
  * This class is a singleton and should be accessed via {@link #getInstance()}.
  */
-public class HotelResource {
-    private static final HotelResource instance = new HotelResource();
-    //private final Collection<Reservation> reservations;
-    private final Collection<Customer> customers;
-
-    private final ArrayList hotelRooms;
+final public class HotelResource {
+    final private static HotelResource instance = new HotelResource();
 
     private HotelResource() {
-        this.hotelRooms = new ArrayList<>(Arrays.asList("A", "B", "C"));
-        CustomerService customerService = CustomerService.getInstance();
-        ReservationService reservationService = ReservationService.getInstance();
+        final CustomerService customerService = CustomerService.getInstance();
+        final ReservationService reservationService = ReservationService.getInstance();
 
         //this.reservations = reservationService.getCustomerReservations();
-        this.customers = customerService.getAllCustomers();
+        //this.customers = customerService.getAllCustomers();
     }
 
     /**

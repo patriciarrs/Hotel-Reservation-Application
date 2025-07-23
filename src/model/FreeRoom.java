@@ -3,7 +3,7 @@ package model;
 /**
  * Represents a free room in the hotel.
  */
-public class FreeRoom extends Room {
+final public class FreeRoom extends Room {
     /**
      * Creates a free room with the specified number and type.
      *

@@ -15,10 +15,11 @@ import java.util.Date;
  * <p>
  * This class is a singleton and should be accessed via {@link ReservationService#getInstance()}.
  */
-public class ReservationService {
-    private static final ReservationService instance = new ReservationService();
+final public class ReservationService {
+    final private static ReservationService instance = new ReservationService();
 
-    private final Collection<Reservation> reservations = new ArrayList<>();
+    final private Collection<Reservation> reservations = new ArrayList<>();
+    final private Collection<IRoom> rooms = new ArrayList<>();
 
     private ReservationService() {
         // private constructor

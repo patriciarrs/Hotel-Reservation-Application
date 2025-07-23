@@ -10,10 +10,10 @@ import java.util.Collection;
  * <p>
  * This class is a singleton and should be accessed via {@link CustomerService#getInstance()}.
  */
-public class CustomerService {
-    private static final CustomerService instance = new CustomerService();
+final public class CustomerService {
+    final private static CustomerService instance = new CustomerService();
 
-    private final Collection<Customer> customers = new ArrayList<>();
+    final private Collection<Customer> customers = new ArrayList<>();
 
     private CustomerService() {
         // private constructor

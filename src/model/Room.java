@@ -1,8 +1,7 @@
 package model;
 
 /**
- * Represents a room in the hotel.
- * Provides methods for getting properties.
+ * Represents a room in the hotel. Provides methods for getting properties.
  */
 public class Room implements IRoom {
     private final String number;
@@ -23,22 +22,22 @@ public class Room implements IRoom {
     }
 
     @Override
-    public String getNumber() {
+    final public String getNumber() {
         return number;
     }
 
     @Override
-    public Double getPrice() {
+    final public Double getPrice() {
         return price;
     }
 
     @Override
-    public RoomType getType() {
+    final public RoomType getType() {
         return type;
     }
 
     @Override
-    public boolean isFree() {
+    final public boolean isFree() {
         return false; // TODO
     }
 

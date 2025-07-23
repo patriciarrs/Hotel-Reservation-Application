@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Represents a customer reservation of a hotel room. Provides its properties.
  */
-public class Reservation {
+final public class Reservation {
     private final Customer customer;
     private final IRoom room;
     private final Date checkIn;
