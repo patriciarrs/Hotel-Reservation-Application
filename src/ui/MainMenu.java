@@ -1,8 +1,12 @@
 package ui;
 
+import api.HotelResource;
+import model.IRoom;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
@@ -11,11 +15,11 @@ import static java.lang.Integer.parseInt;
 /**
  * Main menu for the users who want to book a room.
  */
-public class MainMenu {
+final public class MainMenu {
     /**
      * Initialize the main menu UI.
      */
-    public void getMainMenu() {
+    public void getMenu() {
         String menuMessage = """
                 Welcome to the Hotel Reservation Application
                 
@@ -27,7 +31,7 @@ public class MainMenu {
                 5. Exit
                 _______________________________________________
                 """;
-        String selectOptionMessage = "Please select a number for the menu option.";
+        String selectOptionMessage = "Please select a number for the menu option:";
 
         System.out.println(menuMessage);
         System.out.println(selectOptionMessage);
@@ -42,7 +46,7 @@ public class MainMenu {
      *
      * @param scanner             the text scanner input.
      * @param selectOptionMessage the message for selecting an option.
-     * @throws IllegalArgumentException if the selected option is not an integer, or does not exist.
+     * @throws IllegalArgumentException if the selected option is not an integer between 1 and 6.
      */
     private void handleMenuOptionSelections(Scanner scanner, String selectOptionMessage)
             throws IllegalArgumentException {
@@ -63,11 +67,10 @@ public class MainMenu {
                     case 1 -> findAndReserveARoom(scanner);
                     case 2 -> System.out.println("2");
                     case 3 -> System.out.println("3");
-                    case 4 -> System.out.println("4");
+                    case 4 -> getAdminMenu(scanner, selectOptionMessage);
                     case 5 -> scanner.close();
                 }
             } catch (IllegalArgumentException e) {
-                System.out.println(selectOptionMessage);
                 isInputValid = false;
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
@@ -77,20 +80,20 @@ public class MainMenu {
     }
 
     /**
-     * Find available rooms based on check-in and check-out dates and reserve a room.
+     * Main Menu Option 1: Find available rooms based on check-in and check-out dates and reserve a room.
      *
      * @param scanner the text scanner input.
      */
     private void findAndReserveARoom(Scanner scanner) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
-        LocalDate checkInDate = getCheckInDate(scanner, formatter);
-        LocalDate checkOutDate = getCheckOutDate(scanner, formatter, checkInDate);
+        LocalDate checkIn = getCheckIn(scanner, formatter);
+        LocalDate checkOut = getCheckOut(scanner, formatter, checkIn);
 
-        /*HotelResource hotelResource = HotelResource.getInstance();
+        HotelResource hotelResource = HotelResource.getInstance();
         Collection<IRoom> availableRooms = hotelResource.findAvailableRooms(checkIn, checkOut);
 
-        System.out.println(availableRooms);
+        /*System.out.println(availableRooms);
 
         System.out.println("Would you like to book a room? y/n");
         String shouldReserveRoom = scanner.nextLine();
@@ -103,8 +106,25 @@ public class MainMenu {
                 break;
             default:
                 System.out.println("Please enter Y (Yes) or N (No).");
-        }
-*/
+        }*/
+    }
+
+    /**
+     * Main Menu Option 4: Get the admin menu UI.
+     *
+     * @param scanner             the text scanner input.
+     * @param selectOptionMessage the message for selecting an option.
+     */
+    private void getAdminMenu(Scanner scanner, String selectOptionMessage) {
+        AdminMenu adminMenu = new AdminMenu();
+        adminMenu.getMenu(scanner, selectOptionMessage);
+    }
+
+    /**
+     * TODO
+     */
+    private void reserveARoom() {
+        System.out.println("Do you have and account with us? y/n");
     }
 
     /**
@@ -114,10 +134,10 @@ public class MainMenu {
      * @param formatter the date formatter.
      * @return the check-in date.
      */
-    private LocalDate getCheckInDate(Scanner scanner, DateTimeFormatter formatter) {
-        String inputMessage = "Enter check-in date as yyyy/MM/dd (e.g., 2026/01/01).";
+    private LocalDate getCheckIn(Scanner scanner, DateTimeFormatter formatter) {
+        String inputMessage = "Enter check-in date as yyyy/MM/dd (e.g., 2026/01/01):";
         Predicate<LocalDate> inputValidation = date -> date.isAfter(LocalDate.now());
-        String errorMessage = "Enter a check-in date in the future.";
+        String errorMessage = "Enter a check-in date in the future:";
 
         return getDate(scanner, formatter, inputMessage, inputValidation, errorMessage);
     }
@@ -130,19 +150,12 @@ public class MainMenu {
      * @param checkInDate the check-in date.
      * @return the check-out date.
      */
-    private LocalDate getCheckOutDate(Scanner scanner, DateTimeFormatter formatter, LocalDate checkInDate) {
-        String inputMessage = "Enter check-out date as yyyy/MM/dd (e.g., 2026/01/15).";
+    private LocalDate getCheckOut(Scanner scanner, DateTimeFormatter formatter, LocalDate checkInDate) {
+        String inputMessage = "Enter check-out date as yyyy/MM/dd (e.g., 2026/01/15):";
         Predicate<LocalDate> inputValidation = date -> date.isAfter(checkInDate);
-        String errorMessage = "Enter a check-out date that is after the check-in.";
+        String errorMessage = "Enter a check-out date that is after the check-in:";
 
         return getDate(scanner, formatter, inputMessage, inputValidation, errorMessage);
-    }
-
-    /**
-     * TODO
-     */
-    private void reserveARoom() {
-        System.out.println("Do you have and account with us? y/n");
     }
 
     /**
@@ -162,7 +175,7 @@ public class MainMenu {
             throws DateTimeParseException, IllegalArgumentException {
         System.out.println(inputMessage);
 
-        while (true) {
+        do {
             try {
                 String input = scanner.nextLine();
                 LocalDate dateInput = LocalDate.parse(input, formatter);
@@ -177,6 +190,6 @@ public class MainMenu {
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }
-        }
+        } while (true);
     }
 }
