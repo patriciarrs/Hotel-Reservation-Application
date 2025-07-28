@@ -3,8 +3,6 @@ package api;
 import model.Customer;
 import model.IRoom;
 import model.Reservation;
-import service.CustomerService;
-import service.ReservationService;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -21,14 +19,10 @@ import java.util.Date;
  * This class is a singleton and should be accessed via {@link #getInstance()}.
  */
 final public class HotelResource {
-    final private static HotelResource instance = new HotelResource();
+    private static HotelResource instance;
 
     private HotelResource() {
-        final CustomerService customerService = CustomerService.getInstance();
-        final ReservationService reservationService = ReservationService.getInstance();
 
-        //this.reservations = reservationService.getCustomerReservations();
-        //this.customers = customerService.getAllCustomers();
     }
 
     /**
@@ -37,6 +31,9 @@ final public class HotelResource {
      * @return the global hotel manager.
      */
     public static HotelResource getInstance() {
+        if (instance == null) {
+            instance = new HotelResource();
+        }
         return instance;
     }
 

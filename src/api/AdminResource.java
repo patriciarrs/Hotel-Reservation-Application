@@ -4,20 +4,27 @@ import model.Customer;
 import model.IRoom;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * For the hotel staff only. Used for defining the API. Has little to no behavior. Makes use of the Service classes to
  * implement its methods.
  */
 final public class AdminResource {
-    final private static AdminResource instance = new AdminResource();
+    private static AdminResource instance;
 
     private AdminResource() {
 
     }
 
-    public AdminResource getInstance() {
+    /**
+     * Returns the singleton instance of {@code AdminResource}.
+     *
+     * @return the global admin manager.
+     */
+    public static AdminResource getInstance() {
+        if (instance == null) {
+            instance = new AdminResource();
+        }
         return instance;
     }
 
@@ -25,7 +32,7 @@ final public class AdminResource {
         return null;
     }
 
-    public void addRoom(List<IRoom> rooms) {
+    public void addRoom(IRoom room) {
 
     }
 
