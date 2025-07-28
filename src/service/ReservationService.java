@@ -8,6 +8,8 @@ import model.Room;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides reservation-related operations such as adding, getting and reserving rooms, getting a customer reservations
@@ -16,13 +18,15 @@ import java.util.Date;
  * This class is a singleton and should be accessed via {@link ReservationService#getInstance()}.
  */
 final public class ReservationService {
-    final private static ReservationService instance = new ReservationService();
+    private static ReservationService instance;
 
-    final private Collection<Reservation> reservations = new ArrayList<>();
-    final private Collection<IRoom> rooms = new ArrayList<>();
+    final private Collection<Reservation> reservations;
+    Map<String, IRoom> rooms;
+
 
     private ReservationService() {
-        // private constructor
+        reservations = new ArrayList<>();
+        rooms = new HashMap<>();
     }
 
     /**
@@ -31,7 +35,15 @@ final public class ReservationService {
      * @return the single instance of the service.
      */
     public static ReservationService getInstance() {
+        if (instance == null) {
+            instance = new ReservationService();
+        }
+
         return instance;
+    }
+
+    public Collection<IRoom> getAllRooms() {
+        return rooms.values();
     }
 
     /**
@@ -40,22 +52,25 @@ final public class ReservationService {
      * @param room the room.
      */
     public void addRoom(IRoom room) {
-        Room newRoom = new Room(room.getNumber(), room.getPrice(), room.getType());
-        // TODO
+        String number = room.getNumber();
+
+        Room newRoom = new Room(number, room.getPrice(), room.getType());
+
+        rooms.put(number, newRoom);
     }
 
     /**
-     * Get a room.
+     * Get the room.
      *
      * @param roomNumber the room number
      * @return the room.
      */
-    public IRoom getARoom(String roomNumber) {
-        return null; // TODO
+    public IRoom getRoom(String roomNumber) {
+        return rooms.get(roomNumber);
     }
 
     /**
-     * Reserve a room.
+     * Reserve the room.
      *
      * @param customer the customer that is reserving the room.
      * @param room     the room that is being reserved.
@@ -63,8 +78,9 @@ final public class ReservationService {
      * @param checkOut the check-out date for this reservation.
      * @return the reservation.
      */
-    public Reservation reserveARoom(Customer customer, IRoom room, Date checkIn, Date checkOut) {
+    public Reservation reserveRoom(Customer customer, IRoom room, Date checkIn, Date checkOut) {
         return new Reservation(customer, room, checkIn, checkOut);
+        // TODO
     }
 
     /**
@@ -74,13 +90,21 @@ final public class ReservationService {
      * @return the customers reservations.
      */
     public Collection<Reservation> getCustomerReservations(Customer customer) {
-        return null; // TODO
+        Collection<Reservation> customerReservations = new ArrayList<>();
+
+        for (Reservation reservation : reservations) {
+            if (reservation.getCustomer().equals(customer)) {
+                customerReservations.add(reservation);
+            }
+        }
+
+        return customerReservations;
     }
 
     /**
      * Print all reservations.
      */
-    public void printAllReservation() {
-        System.out.println("TODO");
+    public void printAllReservations() {
+        System.out.println(reservations);
     }
 }

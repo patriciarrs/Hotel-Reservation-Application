@@ -3,6 +3,8 @@ package api;
 import model.Customer;
 import model.IRoom;
 import model.Reservation;
+import service.CustomerService;
+import service.ReservationService;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -20,9 +22,12 @@ import java.util.Date;
  */
 final public class HotelResource {
     private static HotelResource instance;
+    private final CustomerService customerService;
+    private final ReservationService reservationService;
 
     private HotelResource() {
-
+        customerService = CustomerService.getInstance();
+        reservationService = ReservationService.getInstance();
     }
 
     /**
@@ -44,22 +49,27 @@ final public class HotelResource {
      * @return the customer.
      */
     public Customer getCustomer(String email) {
-        return null;
+        return customerService.getCustomer(email);
     }
 
-    public void createACustomer(String email, String firstName, String lastName) {
+    public void createCustomer(String email, String firstName, String lastName) {
+        customerService.addCustomer(email, firstName, lastName);
     }
 
     public IRoom getRoom(String roomNumber) {
-        return null;
+        return reservationService.getRoom(roomNumber);
     }
 
     public Reservation reserveARoom(String customerEmail, IRoom room, Date checkInDate, Date checkOutDate) {
-        return null;
+        Customer customer = getCustomer(customerEmail);
+
+        return reservationService.reserveRoom(customer, room, checkInDate, checkOutDate);
     }
 
     public Collection<Reservation> getCustomersReservations(String customerEmail) {
-        return null;
+        Customer customer = getCustomer(customerEmail);
+
+        return reservationService.getCustomerReservations(customer);
     }
 
     /**
@@ -70,6 +80,10 @@ final public class HotelResource {
      * @return the available rooms.
      */
     public Collection<IRoom> findAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
-        return null; // TODO
+        Collection<IRoom> rooms = reservationService.getAllRooms();
+
+        // TODO Find the available rooms for reservation given the check-in and check-out dates.
+
+        return null;
     }
 }

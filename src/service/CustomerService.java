@@ -2,8 +2,9 @@ package service;
 
 import model.Customer;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides customer-related operations such as adding and getting them.
@@ -11,12 +12,12 @@ import java.util.Collection;
  * This class is a singleton and should be accessed via {@link CustomerService#getInstance()}.
  */
 final public class CustomerService {
-    final private static CustomerService instance = new CustomerService();
+    private static CustomerService instance;
 
-    final private Collection<Customer> customers = new ArrayList<>();
+    Map<String, Customer> customers;
 
     private CustomerService() {
-        // private constructor
+        customers = new HashMap<>();
     }
 
     /**
@@ -25,6 +26,10 @@ final public class CustomerService {
      * @return the single instance of the service.
      */
     public static CustomerService getInstance() {
+        if (instance == null) {
+            instance = new CustomerService();
+        }
+
         return instance;
     }
 
@@ -37,7 +42,8 @@ final public class CustomerService {
      */
     public void addCustomer(String email, String firstName, String lastName) {
         Customer customer = new Customer(firstName, lastName, email);
-        // TODO
+
+        customers.put(email, customer);
     }
 
     /**
@@ -47,10 +53,10 @@ final public class CustomerService {
      * @return a customer.
      */
     public Customer getCustomer(String email) {
-        return null; // TODO
+        return customers.get(email);
     }
 
     public Collection<Customer> getAllCustomers() {
-        return java.util.List.of(); // TODO
+        return customers.values();
     }
 }

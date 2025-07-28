@@ -2,6 +2,8 @@ package api;
 
 import model.Customer;
 import model.IRoom;
+import service.CustomerService;
+import service.ReservationService;
 
 import java.util.Collection;
 
@@ -11,9 +13,12 @@ import java.util.Collection;
  */
 final public class AdminResource {
     private static AdminResource instance;
+    private final CustomerService customerService;
+    private final ReservationService reservationService;
 
     private AdminResource() {
-
+        customerService = CustomerService.getInstance();
+        reservationService = ReservationService.getInstance();
     }
 
     /**
@@ -25,26 +30,27 @@ final public class AdminResource {
         if (instance == null) {
             instance = new AdminResource();
         }
+
         return instance;
     }
 
     public Customer getCustomer(String email) {
-        return null;
+        return customerService.getCustomer(email);
     }
 
     public void addRoom(IRoom room) {
-
+        reservationService.addRoom(room);
     }
 
     public Collection<IRoom> getAllRooms() {
-        return null;
+        return reservationService.getAllRooms();
     }
 
     public Collection<Customer> getAllCustomers() {
-        return null;
+        return customerService.getAllCustomers();
     }
 
     public void displayAllReservations() {
-
+        reservationService.printAllReservations();
     }
 }
