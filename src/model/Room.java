@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 /**
  * Represents a room in the hotel. Provides methods for getting properties.
  */
@@ -38,15 +40,25 @@ public class Room implements IRoom {
 
     @Override
     final public boolean isFree() {
-        return false; // TODO
+        return true; // TODO?
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return Objects.equals(number, room.number);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(number);
     }
 
     @Override
     public String toString() {
-        return "model.Room{" +
-                "number='" + number + '\'' +
-                ", price=" + price +
-                ", type=" + type +
-                '}';
+        String roomType = type.equals(RoomType.SINGLE) ? "Single" : "Double";
+        return "Room number: " + number + "; " + roomType + " bed room; Price: $" + price + ".";
     }
 }
