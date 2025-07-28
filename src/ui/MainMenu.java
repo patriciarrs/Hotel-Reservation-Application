@@ -11,6 +11,7 @@ import java.util.Scanner;
 import java.util.function.Predicate;
 
 import static java.lang.Integer.parseInt;
+//TODO make error messages more clear
 
 /**
  * Main menu for the users who want to book a room.
@@ -31,34 +32,33 @@ final public class MainMenu {
                 5. Exit
                 _______________________________________________
                 """;
-        String selectOptionMessage = "Please select a number for the menu option:";
 
         System.out.println(menuMessage);
-        System.out.println(selectOptionMessage);
 
         Scanner scanner = new Scanner(System.in);
 
-        handleMenuOptionSelections(scanner, selectOptionMessage);
+        handleMenuOptionSelections(scanner);
     }
 
     /**
      * Handle the menu option selections.
      *
-     * @param scanner             the text scanner input.
-     * @param selectOptionMessage the message for selecting an option.
+     * @param scanner the text scanner input.
      * @throws IllegalArgumentException if the selected option is not an integer between 1 and 6.
      */
-    private void handleMenuOptionSelections(Scanner scanner, String selectOptionMessage)
+    private void handleMenuOptionSelections(Scanner scanner)
             throws IllegalArgumentException {
         boolean isInputValid;
 
         do {
             try {
+                System.out.println("Please select a number for the menu option:");
+
                 String input = scanner.nextLine();
                 int intInput = parseInt(input);
 
                 if (intInput < 1 || intInput > 5) {
-                    throw new IllegalArgumentException(selectOptionMessage);
+                    throw new IllegalArgumentException("Only numbers between 1 and 5 are allowed.");
                 }
 
                 isInputValid = true;
@@ -67,7 +67,7 @@ final public class MainMenu {
                     case 1 -> findAndReserveARoom(scanner);
                     case 2 -> System.out.println("2");
                     case 3 -> System.out.println("3");
-                    case 4 -> getAdminMenu(scanner, selectOptionMessage);
+                    case 4 -> getAdminMenu(scanner);
                     case 5 -> scanner.close();
                 }
             } catch (IllegalArgumentException e) {
@@ -112,12 +112,11 @@ final public class MainMenu {
     /**
      * Main Menu Option 4: Get the admin menu UI.
      *
-     * @param scanner             the text scanner input.
-     * @param selectOptionMessage the message for selecting an option.
+     * @param scanner the text scanner input.
      */
-    private void getAdminMenu(Scanner scanner, String selectOptionMessage) {
+    private void getAdminMenu(Scanner scanner) {
         AdminMenu adminMenu = new AdminMenu();
-        adminMenu.getMenu(scanner, selectOptionMessage);
+        adminMenu.getMenu(scanner);
     }
 
     /**
@@ -173,10 +172,10 @@ final public class MainMenu {
     private LocalDate getDate(Scanner scanner, DateTimeFormatter formatter, String inputMessage,
                               Predicate<LocalDate> inputValidation, String errorMessage)
             throws DateTimeParseException, IllegalArgumentException {
-        System.out.println(inputMessage);
 
         do {
             try {
+                System.out.println(inputMessage);
                 String input = scanner.nextLine();
                 LocalDate dateInput = LocalDate.parse(input, formatter);
 
@@ -186,7 +185,7 @@ final public class MainMenu {
 
                 return dateInput;
             } catch (DateTimeParseException e) {
-                System.out.println(inputMessage);
+                System.out.println("Only the the format yyyy/MM/dd is allowed.");
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }
