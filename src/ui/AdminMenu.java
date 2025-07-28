@@ -1,6 +1,7 @@
 package ui;
 
 import api.AdminResource;
+import model.Customer;
 import model.IRoom;
 import model.Room;
 import model.RoomType;
@@ -20,7 +21,8 @@ final public class AdminMenu {
      * Initialize the admin menu UI.
      */
     public void getMenu(Scanner scanner) {
-        String menuMessage = """
+        System.out.println("""
+                
                 Admin Menu
                 _______________________________________________
                 1. See all Customers
@@ -29,9 +31,7 @@ final public class AdminMenu {
                 4. Add a Room
                 5. Back to Main Menu
                 _______________________________________________
-                """;
-
-        System.out.println(menuMessage);
+                """);
 
         handleMenuOptionSelections(scanner);
     }
@@ -60,12 +60,25 @@ final public class AdminMenu {
                 isInputValid = true;
 
                 switch (intInput) {
-                    case 1 -> System.out.println("1");
-                    case 2 -> System.out.println("2");
-                    case 3 -> System.out.println("3");
-                    case 4 -> addARoom(scanner);
-                    case 5 -> scanner.close();
+                    case 1:
+                        seeAllCustomers();
+                        break;
+                    case 2:
+                        seeAllRooms();
+                        break;
+                    case 3:
+                        System.out.println("3");
+                        break;
+                    case 4:
+                        addARoom(scanner);
+                        break;
+                    case 5:
+                        MainMenu mainMenu = new MainMenu();
+                        mainMenu.getMenu();
+                        break;
                 }
+
+                getMenu(scanner);
             } catch (IllegalArgumentException e) {
                 isInputValid = false;
             } catch (Exception e) {
@@ -76,13 +89,34 @@ final public class AdminMenu {
     }
 
     /**
+     * Admin Menu Option 1: See all customers.
+     */
+    private void seeAllCustomers() {
+        Collection<Customer> customers = adminResource.getAllCustomers();
+        for (Customer customer : customers) {
+            System.out.println(customer);
+        }
+    }
+
+    /**
+     * Admin Menu Option 2: See all rooms.
+     */
+    private void seeAllRooms() {
+        Collection<IRoom> rooms = adminResource.getAllRooms();
+
+        for (IRoom room : rooms) {
+            System.out.println(room);
+        }
+    }
+
+    /**
      * Admin Menu Option 4: Add a new room.
      *
      * @param scanner the text scanner input.
      */
     private void addARoom(Scanner scanner) {
         boolean isAddingRoom;
-        
+
         do {
             String number = getNumber(scanner);
             double price = getPrice(scanner);
@@ -100,8 +134,9 @@ final public class AdminMenu {
      *
      * @param scanner the text scanner input.
      * @return the room number.
+     * @throws IllegalArgumentException if the room number already exists.
      */
-    private String getNumber(Scanner scanner) {
+    private String getNumber(Scanner scanner) throws IllegalArgumentException {
         do {
             try {
                 System.out.println("Enter room number:");
@@ -109,7 +144,7 @@ final public class AdminMenu {
 
                 Collection<IRoom> rooms = adminResource.getAllRooms();
 
-                if (rooms != null && rooms.stream().anyMatch(room -> input.equals(room.getNumber()))) {
+                if (rooms.stream().anyMatch(room -> input.equals(room.getNumber()))) {
                     throw new IllegalArgumentException("That room number is already in use.");
                 }
 
@@ -125,10 +160,12 @@ final public class AdminMenu {
      *
      * @param scanner the text scanner input.
      * @return the room price per night.
-     * @throws NullPointerException  if the price input is null.
-     * @throws NumberFormatException if the price input is not a parsable double.
+     * @throws NullPointerException     if the price input is null.
+     * @throws NumberFormatException    if the price input is not a parsable double.
+     * @throws IllegalArgumentException if the price input is not a positive double.
      */
-    private double getPrice(Scanner scanner) throws NullPointerException, NumberFormatException {
+    private double getPrice(Scanner scanner)
+            throws NullPointerException, IllegalArgumentException {
         String message = "Enter price per night:";
         System.out.println(message);
 
@@ -155,11 +192,11 @@ final public class AdminMenu {
      *
      * @param scanner the text scanner input.
      * @return the room type.
+     * @throws NumberFormatException    if the input is not a parsable integer.
      * @throws IllegalArgumentException if the selected option in not 1 or 2.
      */
-    private RoomType getType(Scanner scanner) throws IllegalArgumentException {
-        String message = "Enter room type (1 for single bed, 2 for double bed):";
-        System.out.println(message);
+    private RoomType getType(Scanner scanner) throws NumberFormatException, IllegalArgumentException {
+        System.out.println("Enter room type (1 for single bed, 2 for double bed):");
 
         do {
             try {

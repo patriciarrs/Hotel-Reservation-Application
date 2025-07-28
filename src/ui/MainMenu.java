@@ -9,6 +9,8 @@ import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.Scanner;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
 //TODO make error messages more clear
@@ -17,6 +19,8 @@ import static java.lang.Integer.parseInt;
  * Main menu for the users who want to book a room.
  */
 final public class MainMenu {
+    HotelResource hotelResource = HotelResource.getInstance();
+
     /**
      * Initialize the main menu UI.
      */
@@ -64,12 +68,24 @@ final public class MainMenu {
                 isInputValid = true;
 
                 switch (intInput) {
-                    case 1 -> findAndReserveARoom(scanner);
-                    case 2 -> System.out.println("2");
-                    case 3 -> System.out.println("3");
-                    case 4 -> getAdminMenu(scanner);
-                    case 5 -> scanner.close();
+                    case 1:
+                        findAndReserveARoom(scanner);
+                        break;
+                    case 2:
+                        System.out.println("2");
+                        break;
+                    case 3:
+                        createAnAccount(scanner);
+                        break;
+                    case 4:
+                        getAdminMenu(scanner);
+                        break;
+                    case 5:
+                        scanner.close();
+                        break;
                 }
+
+                getMenu();
             } catch (IllegalArgumentException e) {
                 isInputValid = false;
             } catch (Exception e) {
@@ -107,6 +123,29 @@ final public class MainMenu {
             default:
                 System.out.println("Please enter Y (Yes) or N (No).");
         }*/
+    }
+
+    /**
+     * Main Menu Option 3: Create a customer account.
+     *
+     * @param scanner the text scanner input.
+     */
+    private void createAnAccount(Scanner scanner) {
+        boolean isInputValid;
+
+        do {
+            try {
+                String email = getEmail(scanner);
+                String firstName = getFirstName(scanner);
+                String lastName = getLastName(scanner);
+
+                hotelResource.createCustomer(email, firstName, lastName);
+                isInputValid = true;
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+                isInputValid = false;
+            }
+        } while (!isInputValid);
     }
 
     /**
@@ -191,4 +230,52 @@ final public class MainMenu {
             }
         } while (true);
     }
+
+    private String getEmail(Scanner scanner) {
+        do {
+            try {
+                System.out.println("Enter e-mail with format name@domain.com:");
+                String input = scanner.nextLine();
+
+                final String emailRegex = "^(.+)@(.+).(.+)$";
+                final Pattern pattern = Pattern.compile(emailRegex);
+                Matcher matcher = pattern.matcher(input);
+                boolean isEmailValid = matcher.matches();
+
+                if (!isEmailValid) {
+                    throw new IllegalArgumentException(
+                            "The email should look like 'name@domain.extension' (e.g., user@example.com).");
+                }
+
+                return input;
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+        } while (true);
+    }
+
+    private String getFirstName(Scanner scanner) {
+        do {
+            try {
+                System.out.println("Enter first name:");
+
+                return scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+        } while (true);
+    }
+
+    private String getLastName(Scanner scanner) {
+        do {
+            try {
+                System.out.println("Enter last name");
+
+                return scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+        } while (true);
+    }
+
 }
