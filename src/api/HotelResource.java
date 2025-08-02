@@ -8,7 +8,7 @@ import service.ReservationService;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
+
 
 /**
  * Singleton resource responsible for loading and providing hotel configuration settings (for public usage).
@@ -60,7 +60,7 @@ final public class HotelResource {
         return reservationService.getRoom(roomNumber);
     }
 
-    public Reservation reserveARoom(String customerEmail, IRoom room, Date checkInDate, Date checkOutDate) {
+    public Reservation reserveRoom(String customerEmail, IRoom room, LocalDate checkInDate, LocalDate checkOutDate) {
         Customer customer = getCustomer(customerEmail);
 
         return reservationService.reserveRoom(customer, room, checkInDate, checkOutDate);
@@ -80,10 +80,6 @@ final public class HotelResource {
      * @return the available rooms.
      */
     public Collection<IRoom> findAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
-        Collection<IRoom> rooms = reservationService.getAllRooms();
-
-        // TODO Find the available rooms for reservation given the check-in and check-out dates.
-
-        return null;
+        return reservationService.findAvailableRooms(checkIn, checkOut);
     }
 }

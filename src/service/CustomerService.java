@@ -14,10 +14,10 @@ import java.util.Map;
 final public class CustomerService {
     private static CustomerService instance;
 
-    Map<String, Customer> customers;
+    Map<String, Customer> emailToCustomer;
 
     private CustomerService() {
-        customers = new HashMap<>();
+        emailToCustomer = new HashMap<>();
     }
 
     /**
@@ -43,7 +43,7 @@ final public class CustomerService {
     public void addCustomer(String email, String firstName, String lastName) {
         Customer customer = new Customer(firstName, lastName, email);
 
-        customers.put(email, customer);
+        emailToCustomer.put(email, customer);
     }
 
     /**
@@ -53,10 +53,10 @@ final public class CustomerService {
      * @return a customer.
      */
     public Customer getCustomer(String email) {
-        return customers.get(email);
+        return emailToCustomer.get(email);
     }
 
     public Collection<Customer> getAllCustomers() {
-        return customers.values();
+        return emailToCustomer.values();
     }
 }

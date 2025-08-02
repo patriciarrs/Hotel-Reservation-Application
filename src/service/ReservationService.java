@@ -5,10 +5,11 @@ import model.IRoom;
 import model.Reservation;
 import model.Room;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,13 +21,12 @@ import java.util.Map;
 final public class ReservationService {
     private static ReservationService instance;
 
-    final private Collection<Reservation> reservations;
-    Map<String, IRoom> rooms;
-
+    final private Map<String, List<Reservation>> roomNumberToReservations;
+    final private Map<String, IRoom> roomNumberToRoom;
 
     private ReservationService() {
-        reservations = new ArrayList<>();
-        rooms = new HashMap<>();
+        roomNumberToReservations = new HashMap<>();
+        roomNumberToRoom = new HashMap<>();
     }
 
     /**
@@ -42,12 +42,8 @@ final public class ReservationService {
         return instance;
     }
 
-    public Collection<IRoom> getAllRooms() {
-        return rooms.values();
-    }
-
     /**
-     * Add a room.
+     * Add a room to the roomNumberToRoom map.
      *
      * @param room the room.
      */
@@ -56,21 +52,21 @@ final public class ReservationService {
 
         Room newRoom = new Room(number, room.getPrice(), room.getType());
 
-        rooms.put(number, newRoom);
+        roomNumberToRoom.put(number, newRoom);
     }
 
     /**
-     * Get the room.
+     * Get a room from the roomNumberToRoom map.
      *
      * @param roomNumber the room number
      * @return the room.
      */
     public IRoom getRoom(String roomNumber) {
-        return rooms.get(roomNumber);
+        return roomNumberToRoom.get(roomNumber);
     }
 
     /**
-     * Reserve the room.
+     * Reserve a room.
      *
      * @param customer the customer that is reserving the room.
      * @param room     the room that is being reserved.
@@ -78,9 +74,33 @@ final public class ReservationService {
      * @param checkOut the check-out date for this reservation.
      * @return the reservation.
      */
-    public Reservation reserveRoom(Customer customer, IRoom room, Date checkIn, Date checkOut) {
+    public Reservation reserveRoom(Customer customer, IRoom room, LocalDate checkIn, LocalDate checkOut) {
+
+
         return new Reservation(customer, room, checkIn, checkOut);
-        // TODO
+    }
+
+    /**
+     * Find the available rooms for the desired dates.
+     *
+     * @param checkIn  check-in date.
+     * @param checkOut check-out date.
+     * @return the available rooms for the desired dates.
+     */
+    public Collection<IRoom> findAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
+        Collection<IRoom> availableRooms = new ArrayList<>();
+
+        for (List<Reservation> roomReservations : roomNumberToReservations.values()) {
+            for (Reservation reservation : roomReservations) {
+                boolean isBooked = isBooked(reservation.getCheckIn(), reservation.getCheckOut(), checkIn, checkOut);
+
+                if (!isBooked) {
+                    availableRooms.add(reservation.getRoom());
+                }
+            }
+        }
+
+        return availableRooms;
     }
 
     /**
@@ -92,9 +112,11 @@ final public class ReservationService {
     public Collection<Reservation> getCustomerReservations(Customer customer) {
         Collection<Reservation> customerReservations = new ArrayList<>();
 
-        for (Reservation reservation : reservations) {
-            if (reservation.getCustomer().equals(customer)) {
-                customerReservations.add(reservation);
+        for (List<Reservation> roomReservation : roomNumberToReservations.values()) {
+            for (Reservation reservation : roomReservation) {
+                if (reservation.getCustomer().equals(customer)) {
+                    customerReservations.add(reservation);
+                }
             }
         }
 
@@ -105,6 +127,19 @@ final public class ReservationService {
      * Print all reservations.
      */
     public void printAllReservations() {
-        System.out.println(reservations);
+        System.out.println(roomNumberToReservations);
+    }
+
+    /**
+     * Check if the room is already booked for the desired dates.
+     *
+     * @param checkIn1  the existing reservation check-in date.
+     * @param checkOut1 the existing reservation check-out date.
+     * @param checkIn2  the desired reservation check-in date.
+     * @param checkOut2 the desired reservation check-out date.
+     * @return true if the room is already booked for the desired dates.
+     */
+    private boolean isBooked(LocalDate checkIn1, LocalDate checkOut1, LocalDate checkIn2, LocalDate checkOut2) {
+        return checkIn1.isBefore(checkOut2) && checkIn2.isBefore(checkOut1);
     }
 }

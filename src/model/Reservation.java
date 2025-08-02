@@ -1,6 +1,6 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -9,10 +9,10 @@ import java.util.Objects;
 final public class Reservation {
     private final Customer customer;
     private final IRoom room;
-    private final Date checkIn;
-    private final Date checkOut;
+    private final LocalDate checkIn;
+    private final LocalDate checkOut;
 
-    public Reservation(Customer customer, IRoom room, Date checkIn, Date checkOut) {
+    public Reservation(Customer customer, IRoom room, LocalDate checkIn, LocalDate checkOut) {
         this.customer = customer;
         this.room = room;
         this.checkIn = checkIn;
@@ -22,7 +22,19 @@ final public class Reservation {
     public Customer getCustomer() {
         return customer;
     }
-    
+
+    public IRoom getRoom() {
+        return room;
+    }
+
+    public LocalDate getCheckIn() {
+        return checkIn;
+    }
+
+    public LocalDate getCheckOut() {
+        return checkOut;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
