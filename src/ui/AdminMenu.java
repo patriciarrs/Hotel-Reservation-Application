@@ -5,6 +5,7 @@ import model.Customer;
 import model.IRoom;
 import model.Room;
 import model.RoomType;
+import utils.YesOrNoInput;
 
 import java.util.Collection;
 import java.util.Scanner;
@@ -125,7 +126,7 @@ final public class AdminMenu {
             Room room = new Room(number, price, type);
             adminResource.addRoom(room);
 
-            isAddingRoom = checkIsAddingRoom(scanner);
+            isAddingRoom = YesOrNoInput.getYesOrNo("Would you like to add a another room?", scanner);
         } while (isAddingRoom);
     }
 
@@ -208,31 +209,6 @@ final public class AdminMenu {
                 }
 
                 return intInput == 1 ? RoomType.SINGLE : RoomType.DOUBLE;
-            } catch (Exception e) {
-                System.out.println(e.getLocalizedMessage());
-            }
-        } while (true);
-    }
-
-    /**
-     * Check if the admin user wants to add another room to the collection.
-     *
-     * @param scanner the text scanner input.
-     * @return true if the admin user wants to add another room to the collection.
-     * @throws IllegalArgumentException if the input is invalid.
-     */
-    private boolean checkIsAddingRoom(Scanner scanner) throws IllegalArgumentException {
-        System.out.println("Would you like to add a another room? y/n");
-
-        do {
-            try {
-                String input = scanner.nextLine();
-
-                if (!input.equalsIgnoreCase("y") && !input.equalsIgnoreCase("n")) {
-                    throw new IllegalArgumentException("Please enter Y (Yes) or N (No):");
-                }
-
-                return input.equalsIgnoreCase("y");
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }

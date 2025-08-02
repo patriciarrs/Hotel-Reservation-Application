@@ -2,11 +2,11 @@ package ui;
 
 import api.HotelResource;
 import model.Customer;
+import model.Dates;
 import model.IRoom;
-import utils.DateUtils;
+import utils.DatesInput;
+import utils.YesOrNoInput;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -14,10 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
-
-
-record Dates(LocalDate checkIn, LocalDate checkOut) {
-}
 
 /**
  * Main menu for the users who want to book a room.
@@ -106,7 +102,7 @@ final public class MainMenu {
      * @param scanner the text scanner input.
      */
     private void findAndReserveARoom(Scanner scanner) {
-        Dates dates = getDates(scanner);
+        Dates dates = DatesInput.getDates(scanner);
 
         Collection<IRoom> availableRooms = hotelResource.findAvailableRooms(dates.checkIn(), dates.checkOut());
 
@@ -114,37 +110,15 @@ final public class MainMenu {
             System.out.println(room);
         }
 
-        boolean isBooking = checkIsBooking(scanner);
+        boolean isBooking = YesOrNoInput.getYesOrNo("Would you like to book a room?", scanner);
 
         if (isBooking) {
             // TODO refactor
-            boolean hasAccountAccordingToUser = hasAccountAccordingToUser(scanner);
+            boolean hasAccountAccordingToUser = YesOrNoInput.getYesOrNo("Do you have an account with us?", scanner);
 
             if (hasAccountAccordingToUser) {
                 String email = getEmail(scanner);
-                boolean hasAccountAccordingToSystem = hasAccountAccordingToSystem(email, scanner);
-
-                if (hasAccountAccordingToSystem) {
-                    System.out.println("What room number would you like to reserve?");
-                    String input = scanner.nextLine();
-
-                    boolean isValidRoom = availableRooms.stream().anyMatch(room -> room.getNumber().equals(input));
-
-                    if (isValidRoom) {
-                        for (IRoom room : availableRooms) {
-                            if (room.getNumber().equals(input)) {
-                                hotelResource.reserveRoom(email, room, dates.checkIn(), dates.checkOut());
-                            }
-                        }
-                    } else {
-                        // TODO error
-                    }
-
-                } else {
-                    System.out.println(
-                            "Account not found. Please create an account with us to conclude booking.");
-                    createAnAccount(scanner);
-                }
+                reserveRoom(email, scanner, availableRooms, dates);
             } else {
                 createAnAccount(scanner);
             }
@@ -154,18 +128,45 @@ final public class MainMenu {
     }
 
     /**
-     * Get the desired check-in and check-out dates.
+     * Reserve a room from the available rooms.
      *
-     * @param scanner the text scanner input.
-     * @return the desired check-in and check-out dates.
+     * @param email          the customer email.
+     * @param scanner        the text scanner input.
+     * @param availableRooms the available rooms for the desired dates.
+     * @param dates          the desired check-in and check-out dates.
      */
-    private Dates getDates(Scanner scanner) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+    private void reserveRoom(String email, Scanner scanner, Collection<IRoom> availableRooms, Dates dates) {
+        boolean hasAccountAccordingToSystem = hasAccountAccordingToSystem(email, scanner);
 
-        LocalDate checkIn = DateUtils.getCheckIn(scanner, formatter);
-        LocalDate checkOut = DateUtils.getCheckOut(scanner, formatter, checkIn);
+        if (hasAccountAccordingToSystem) {
+            boolean isValidRoom = false;
 
-        return new Dates(checkIn, checkOut);
+            do {
+                try {
+                    System.out.println("What room number would you like to reserve?");
+                    String input = scanner.nextLine();
+
+                    isValidRoom = availableRooms.stream().anyMatch(room -> room.getNumber().equals(input));
+
+                    if (!isValidRoom) {
+                        throw new IllegalArgumentException("Only the room numbers displayed above are allowed.");
+                    }
+
+                    for (IRoom room : availableRooms) {
+                        if (room.getNumber().equals(input)) {
+                            hotelResource.reserveRoom(email, room, dates.checkIn(), dates.checkOut());
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getLocalizedMessage());
+                }
+            } while (!isValidRoom);
+        } else {
+            System.out.println(
+                    "Account not found. Please create an account with us to conclude booking.");
+            String newAccountEmail = createAnAccount(scanner);
+            reserveRoom(newAccountEmail, scanner, availableRooms, dates);
+        }
     }
 
     /**
@@ -182,63 +183,11 @@ final public class MainMenu {
     }
 
     /**
-     * Check if the user wants to book a room.
-     *
-     * @param scanner the text scanner input.
-     * @return true if the user wants to book a room.
-     * @throws IllegalArgumentException if the input is invalid.
-     */
-    private boolean checkIsBooking(Scanner scanner) throws IllegalArgumentException {
-        System.out.println("Would you like to book a room? y/n");
-
-        do {
-            try {
-                String input = scanner.nextLine();
-
-                if (!input.equalsIgnoreCase("y") && !input.equalsIgnoreCase("n")) {
-                    throw new IllegalArgumentException("Please enter Y (Yes) or N (No):");
-                }
-
-                return input.equalsIgnoreCase("y");
-            } catch (Exception e) {
-                System.out.println(e.getLocalizedMessage());
-            }
-        } while (true);
-    }
-
-    /**
-     * Ask the user if he already has an existing account.
-     *
-     * @param scanner the text scanner input.
-     * @return true if the user already has an existing account.
-     * @throws IllegalArgumentException if the input is invalid.
-     */
-    private boolean hasAccountAccordingToUser(Scanner scanner) throws IllegalArgumentException {
-        System.out.println("Do you have an account with us? y/n");
-
-        do {
-            try {
-                String input = scanner.nextLine();
-
-                if (!input.equalsIgnoreCase("y") && !input.equalsIgnoreCase("n")) {
-                    throw new IllegalArgumentException("Please enter Y (Yes) or N (No):");
-                }
-
-                return input.equalsIgnoreCase("y");
-            } catch (Exception e) {
-                System.out.println(e.getLocalizedMessage());
-            }
-        } while (true);
-    }
-
-
-    /**
      * Main Menu Option 3: Create a customer account.
      *
      * @param scanner the text scanner input.
      */
-    private void createAnAccount(Scanner scanner) {
-        boolean isInputValid;
+    private String createAnAccount(Scanner scanner) {
 
         do {
             try {
@@ -247,12 +196,12 @@ final public class MainMenu {
                 String lastName = getLastName(scanner);
 
                 hotelResource.createCustomer(email, firstName, lastName);
-                isInputValid = true;
+
+                return email;
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
-                isInputValid = false;
             }
-        } while (!isInputValid);
+        } while (true);
     }
 
     /**

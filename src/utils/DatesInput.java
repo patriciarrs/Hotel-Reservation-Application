@@ -1,5 +1,7 @@
 package utils;
 
+import model.Dates;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -7,9 +9,24 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
-public final class DateUtils {
-    private DateUtils() {
+public final class DatesInput {
+    private DatesInput() {
         throw new UnsupportedOperationException("Utility class cannot be instantiated");
+    }
+
+    /**
+     * Get the desired check-in and check-out dates.
+     *
+     * @param scanner the text scanner input.
+     * @return the desired check-in and check-out dates.
+     */
+    public static Dates getDates(Scanner scanner) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+        LocalDate checkIn = getCheckIn(scanner, formatter);
+        LocalDate checkOut = getCheckOut(scanner, formatter, checkIn);
+
+        return new Dates(checkIn, checkOut);
     }
 
     /**
@@ -19,7 +36,7 @@ public final class DateUtils {
      * @param formatter the date formatter.
      * @return the check-in date.
      */
-    public static LocalDate getCheckIn(Scanner scanner, DateTimeFormatter formatter) {
+    private static LocalDate getCheckIn(Scanner scanner, DateTimeFormatter formatter) {
         String inputMessage = "Enter check-in date as yyyy/MM/dd (e.g., 2026/01/01):";
         Predicate<LocalDate> inputValidation = date -> date.isAfter(LocalDate.now());
         String errorMessage = "Enter a check-in date in the future:";
@@ -35,7 +52,7 @@ public final class DateUtils {
      * @param checkInDate the check-in date.
      * @return the check-out date.
      */
-    public static LocalDate getCheckOut(Scanner scanner, DateTimeFormatter formatter, LocalDate checkInDate) {
+    private static LocalDate getCheckOut(Scanner scanner, DateTimeFormatter formatter, LocalDate checkInDate) {
         String inputMessage = "Enter check-out date as yyyy/MM/dd (e.g., 2026/01/15):";
         Predicate<LocalDate> inputValidation = date -> date.isAfter(checkInDate);
         String errorMessage = "Enter a check-out date that is after the check-in:";
@@ -57,8 +74,8 @@ public final class DateUtils {
      * @throws DateTimeParseException   if the input date format is invalid.
      * @throws IllegalArgumentException if the input date is invalid.
      */
-    private LocalDate getDate(Scanner scanner, DateTimeFormatter formatter, String inputMessage,
-                              Predicate<LocalDate> inputValidation, String errorMessage)
+    private static LocalDate getDate(Scanner scanner, DateTimeFormatter formatter, String inputMessage,
+                                     Predicate<LocalDate> inputValidation, String errorMessage)
             throws NoSuchElementException, IllegalStateException, DateTimeParseException, IllegalArgumentException {
         do {
             try {
@@ -67,15 +84,15 @@ public final class DateUtils {
                 LocalDate dateInput = LocalDate.parse(input, formatter);
 
                 if (!inputValidation.test(dateInput)) {
-                    throw new IllegalArgumentException("Only the the format yyyy/MM/dd is allowed.");
+                    throw new IllegalArgumentException(errorMessage);
                 }
 
                 return dateInput;
+            } catch (DateTimeParseException e) {
+                System.out.println("Only the the format yyyy/MM/dd is allowed.");
             } catch (Exception e) {
-                // TODO confirm what message is shown when IllegalArgumentException
                 System.out.println(e.getLocalizedMessage());
             }
         } while (true);
     }
-
 }
