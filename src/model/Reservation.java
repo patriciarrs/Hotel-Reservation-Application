@@ -51,11 +51,20 @@ final public class Reservation {
 
     @Override
     public String toString() {
-        return "Reservation{" +
-                "customer=" + customer +
-                ", room=" + room +
-                ", checkIn=" + checkIn +
-                ", checkOut=" + checkOut +
-                '}';
+        return """
+                Reservation
+                $firstName $lastName
+                Room: $number - $type
+                Price: $price price per night
+                Check-in date: $checkIn
+                Check-out date: $checkOut
+                """
+                .replace("$firstName", customer.getFirstName())
+                .replace("$lastName", customer.getLastName())
+                .replace("$number", room.getNumber())
+                .replace("$type", room.getType().name())
+                .replace("$price", room.getPrice().toString())
+                .replace("$checkIn", checkIn.toString())
+                .replace("$checkOut", checkOut.toString());
     }
 }

@@ -204,7 +204,9 @@ final public class MainMenu {
 
                     IRoom room = hotelResource.getRoom(input);
 
-                    hotelResource.reserveRoom(email, room, dates.checkIn(), dates.checkOut());
+                    Reservation reservation = hotelResource.reserveRoom(email, room, dates.checkIn(), dates.checkOut());
+
+                    System.out.println(reservation);
                 } catch (Exception e) {
                     System.out.println(e.getLocalizedMessage());
                 }
