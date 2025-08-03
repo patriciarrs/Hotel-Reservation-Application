@@ -36,7 +36,7 @@ final public class CustomerService {
     /**
      * Add a customer.
      *
-     * @param email     the customer email.
+     * @param email     the customer e-mail.
      * @param firstName the customer first name.
      * @param lastName  the customer last name.
      */
@@ -49,13 +49,18 @@ final public class CustomerService {
     /**
      * Get a customer.
      *
-     * @param email the customer email.
+     * @param email the customer e-mail.
      * @return a customer.
      */
     public Customer getCustomer(String email) {
         return emailToCustomer.get(email);
     }
 
+    /**
+     * Get all customers.
+     *
+     * @return all customers.
+     */
     public Collection<Customer> getAllCustomers() {
         return emailToCustomer.values();
     }

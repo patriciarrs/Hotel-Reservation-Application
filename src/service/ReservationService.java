@@ -66,6 +66,15 @@ final public class ReservationService {
     }
 
     /**
+     * Get all rooms.
+     *
+     * @return all rooms.
+     */
+    public Collection<IRoom> getAllRooms() {
+        return roomNumberToRoom.values();
+    }
+
+    /**
      * Reserve a room.
      *
      * @param customer the customer that is reserving the room.
@@ -107,7 +116,7 @@ final public class ReservationService {
      * Get the reservations for a customer.
      *
      * @param customer the customer.
-     * @return the customers reservations.
+     * @return the customer reservations.
      */
     public Collection<Reservation> getCustomerReservations(Customer customer) {
         Collection<Reservation> customerReservations = new ArrayList<>();

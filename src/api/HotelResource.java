@@ -11,7 +11,7 @@ import java.util.Collection;
 
 
 /**
- * Singleton resource responsible for loading and providing hotel configuration settings (for public usage).
+ * Singleton resource responsible for loading and providing hotel settings (for public usage).
  * <p>
  * Used for defining the API. Has little to no behavior. Makes use of the Service classes to implement its methods.
  * <p>
@@ -45,29 +45,57 @@ final public class HotelResource {
     /**
      * Get a customer.
      *
-     * @param email the customer email.
+     * @param email the customer e-mail.
      * @return the customer.
      */
     public Customer getCustomer(String email) {
         return customerService.getCustomer(email);
     }
 
+    /**
+     * Create a customer.
+     *
+     * @param email     the customer e-mail.
+     * @param firstName the customer first name.
+     * @param lastName  the customer last name.
+     */
     public void createCustomer(String email, String firstName, String lastName) {
         customerService.addCustomer(email, firstName, lastName);
     }
 
-    public IRoom getRoom(String roomNumber) {
-        return reservationService.getRoom(roomNumber);
+    /**
+     * Get a room by room number.
+     *
+     * @param number the room number
+     * @return the room.
+     */
+    public IRoom getRoom(String number) {
+        return reservationService.getRoom(number);
     }
 
-    public Reservation reserveRoom(String customerEmail, IRoom room, LocalDate checkInDate, LocalDate checkOutDate) {
-        Customer customer = getCustomer(customerEmail);
+    /**
+     * Reserve a room.
+     *
+     * @param email        the customer e-mail.
+     * @param room         the room.
+     * @param checkInDate  the check-in date.
+     * @param checkOutDate the check-out date.
+     * @return the reservation.
+     */
+    public Reservation reserveRoom(String email, IRoom room, LocalDate checkInDate, LocalDate checkOutDate) {
+        Customer customer = getCustomer(email);
 
         return reservationService.reserveRoom(customer, room, checkInDate, checkOutDate);
     }
 
-    public Collection<Reservation> getCustomersReservations(String customerEmail) {
-        Customer customer = getCustomer(customerEmail);
+    /**
+     * Get the customer reservations (based on his e-mail).
+     *
+     * @param email the customer e-mail.
+     * @return the customer reservations.
+     */
+    public Collection<Reservation> getCustomersReservations(String email) {
+        Customer customer = getCustomer(email);
 
         return reservationService.getCustomerReservations(customer);
     }

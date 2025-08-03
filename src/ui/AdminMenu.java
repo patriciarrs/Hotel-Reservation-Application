@@ -5,9 +5,10 @@ import model.Customer;
 import model.IRoom;
 import model.Room;
 import model.RoomType;
-import utils.YesOrNoInput;
+import utils.StringInput;
 
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
@@ -41,10 +42,13 @@ final public class AdminMenu {
      * Handle the menu option selections.
      *
      * @param scanner the text scanner input.
-     * @throws IllegalArgumentException if the selected option is not an integer, or does not exist.
+     * @throws NoSuchElementException   if no line is found on the scanner.
+     * @throws IllegalStateException    if the scanner is closed.
+     * @throws NumberFormatException    if the selected option does not contain a parsable integer.
+     * @throws IllegalArgumentException if the selected option is not an integer between 1 and 6.
      */
     private void handleMenuOptionSelections(Scanner scanner)
-            throws IllegalArgumentException {
+            throws NoSuchElementException, IllegalStateException, NumberFormatException, IllegalArgumentException {
         boolean isInputValid;
 
         do {
@@ -68,7 +72,7 @@ final public class AdminMenu {
                         seeAllRooms();
                         break;
                     case 3:
-                        System.out.println("3");
+                        seeAllReservations();
                         break;
                     case 4:
                         addARoom(scanner);
@@ -80,9 +84,8 @@ final public class AdminMenu {
                 }
 
                 getMenu(scanner);
-            } catch (IllegalArgumentException e) {
-                isInputValid = false;
             } catch (Exception e) {
+                // TODO confirm what message is shown when IllegalArgumentException
                 System.out.println(e.getLocalizedMessage());
                 isInputValid = false;
             }
@@ -94,6 +97,7 @@ final public class AdminMenu {
      */
     private void seeAllCustomers() {
         Collection<Customer> customers = adminResource.getAllCustomers();
+
         for (Customer customer : customers) {
             System.out.println(customer);
         }
@@ -108,6 +112,13 @@ final public class AdminMenu {
         for (IRoom room : rooms) {
             System.out.println(room);
         }
+    }
+
+    /**
+     * Admin Menu Option 3: See all reservations.
+     */
+    private void seeAllReservations() {
+        adminResource.displayAllReservations();
     }
 
     /**
@@ -126,7 +137,7 @@ final public class AdminMenu {
             Room room = new Room(number, price, type);
             adminResource.addRoom(room);
 
-            isAddingRoom = YesOrNoInput.getYesOrNo("Would you like to add a another room?", scanner);
+            isAddingRoom = StringInput.getYesOrNo("Would you like to add a another room?", scanner);
         } while (isAddingRoom);
     }
 
@@ -135,6 +146,8 @@ final public class AdminMenu {
      *
      * @param scanner the text scanner input.
      * @return the room number.
+     * @throws NoSuchElementException   if no line is found on the scanner.
+     * @throws IllegalStateException    if the scanner is closed.
      * @throws IllegalArgumentException if the room number already exists.
      */
     private String getNumber(Scanner scanner) throws IllegalArgumentException {
@@ -161,12 +174,15 @@ final public class AdminMenu {
      *
      * @param scanner the text scanner input.
      * @return the room price per night.
+     * @throws NoSuchElementException   if no line is found on the scanner.
+     * @throws IllegalStateException    if the scanner is closed.
      * @throws NullPointerException     if the price input is null.
      * @throws NumberFormatException    if the price input is not a parsable double.
      * @throws IllegalArgumentException if the price input is not a positive double.
      */
     private double getPrice(Scanner scanner)
-            throws NullPointerException, IllegalArgumentException {
+            throws NoSuchElementException, IllegalStateException, NullPointerException, NumberFormatException,
+            IllegalArgumentException {
         String message = "Enter price per night:";
         System.out.println(message);
 
@@ -193,10 +209,13 @@ final public class AdminMenu {
      *
      * @param scanner the text scanner input.
      * @return the room type.
+     * @throws NoSuchElementException   if no line is found on the scanner.
+     * @throws IllegalStateException    if the scanner is closed.
      * @throws NumberFormatException    if the input is not a parsable integer.
      * @throws IllegalArgumentException if the selected option in not 1 or 2.
      */
-    private RoomType getType(Scanner scanner) throws NumberFormatException, IllegalArgumentException {
+    private RoomType getType(Scanner scanner)
+            throws NoSuchElementException, IllegalStateException, NumberFormatException, IllegalArgumentException {
         System.out.println("Enter room type (1 for single bed, 2 for double bed):");
 
         do {

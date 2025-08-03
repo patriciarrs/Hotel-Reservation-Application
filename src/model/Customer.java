@@ -13,12 +13,12 @@ final public class Customer {
     private final String email;
 
     /**
-     * Creates a customer with the specified first and last name and email.
+     * Creates a customer with the specified first and last name and e-mail.
      *
      * @param firstName the customer first name.
      * @param lastName  the customer last name.
-     * @param email     the customer email.
-     * @throws IllegalArgumentException if the email is not valid.
+     * @param email     the customer e-mail.
+     * @throws IllegalArgumentException if the e-mail format is invalid.
      */
     public Customer(String firstName, String lastName, String email) throws IllegalArgumentException {
         this.firstName = firstName;
@@ -31,7 +31,7 @@ final public class Customer {
 
         if (!isEmailValid) {
             throw new IllegalArgumentException(
-                    "The email should look like 'name@domain.extension' (e.g., user@example.com).");
+                    "The e-mail should look like 'name@domain.extension' (e.g., user@example.com).");
         }
 
         this.email = email;
