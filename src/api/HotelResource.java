@@ -4,6 +4,7 @@ import model.Customer;
 import model.Dates;
 import model.IRoom;
 import model.Reservation;
+import service.CustomerService;
 import service.ReservationService;
 
 import java.util.Collection;
@@ -12,15 +13,17 @@ import java.util.Collection;
  * API to the UI intended for public usage.
  * <p>
  * Intermediary between the UI components and services. Should have little to no behavior and make use of the Service
- * classes to implement its methods
+ * classes to implement its methods.
  */
 final public class HotelResource {
     private static HotelResource instance;
 
     private final ReservationService reservationService;
+    private final CustomerService customerService;
 
     private HotelResource() {
         reservationService = ReservationService.getInstance();
+        customerService = CustomerService.getInstance();
     }
 
     public static HotelResource getInstance() {
@@ -37,7 +40,7 @@ final public class HotelResource {
      * @return the customer.
      */
     public Customer getCustomer(String email) {
-        return reservationService.getCustomer(email);
+        return customerService.getCustomer(email);
     }
 
     /**
@@ -48,7 +51,7 @@ final public class HotelResource {
      * @param lastName  the customer last name.
      */
     public void createCustomer(String email, String firstName, String lastName) {
-        reservationService.createCustomer(email, firstName, lastName);
+        customerService.addCustomer(email, firstName, lastName);
     }
 
     /**
@@ -102,6 +105,6 @@ final public class HotelResource {
      * @return all rooms.
      */
     public Collection<Customer> getAllCustomers() {
-        return reservationService.getAllCustomers();
+        return customerService.getAllCustomers();
     }
 }

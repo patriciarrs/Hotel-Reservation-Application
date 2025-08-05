@@ -3,6 +3,7 @@ package api;
 import model.Customer;
 import model.IRoom;
 import service.CustomerService;
+import service.ReservationService;
 
 import java.util.Collection;
 
@@ -15,9 +16,11 @@ import java.util.Collection;
 final public class AdminResource {
     private static AdminResource instance;
     private final CustomerService customerService;
+    private final ReservationService reservationService;
 
     private AdminResource() {
         customerService = CustomerService.getInstance();
+        reservationService = ReservationService.getInstance();
     }
 
     public static AdminResource getInstance() {
@@ -27,14 +30,14 @@ final public class AdminResource {
 
         return instance;
     }
-    
+
     /**
      * Add a room.
      *
      * @param room the room.
      */
     public void addRoom(IRoom room) {
-        customerService.addRoom(room);
+        reservationService.addRoom(room);
     }
 
     /**
@@ -43,7 +46,7 @@ final public class AdminResource {
      * @return all rooms.
      */
     public Collection<IRoom> getAllRooms() {
-        return customerService.getAllRooms();
+        return reservationService.getAllRooms();
     }
 
     /**
@@ -59,13 +62,14 @@ final public class AdminResource {
      * Display all reservations.
      */
     public void displayAllReservations() {
-        customerService.printAllReservations();
+        reservationService.printAllReservations();
     }
 
     /**
      * Add test data (rooms and customers) for testing.
      */
     public void addTestData() {
+        reservationService.addTestData();
         customerService.addTestData();
     }
 }
