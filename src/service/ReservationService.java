@@ -67,10 +67,9 @@ final public class ReservationService {
      * @param customer the customer that is reserving the room.
      * @param room     the room that is being reserved.
      * @param dates    the check-in and check-out dates for this reservation.
-     * @return the reservation.
      */
-    public Reservation reserveRoom(Customer customer, IRoom room, Dates dates) {
-        return new Reservation(customer, room, dates.checkIn(), dates.checkOut());
+    public void reserveRoom(Customer customer, IRoom room, Dates dates) {
+        new Reservation(customer, room, dates.checkIn(), dates.checkOut());
     }
 
     /**

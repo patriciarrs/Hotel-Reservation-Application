@@ -11,7 +11,6 @@ final public class FreeRoom extends Room {
      * @param type   the room type.
      */
     public FreeRoom(String number, RoomType type) {
-        // TODO?
         super(number, 0.0, type);
     }
 
