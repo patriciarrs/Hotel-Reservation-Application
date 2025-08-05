@@ -4,6 +4,7 @@ out/
 !**/src/test/**/out/
 .idea
 *.iml
+qodana.yaml
 
 ### Eclipse ###
 .apt_generated
