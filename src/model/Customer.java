@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Represents a customer of the hotel. Provides its properties.
+ * Represents the domain of a customer. Models the data object for the hotel reservation application domain.
  */
 final public class Customer {
     private final String firstName;
@@ -43,6 +43,10 @@ final public class Customer {
 
     public String getLastName() {
         return lastName;
+    }
+    
+    public String getEmail() {
+        return email;
     }
 
     @Override

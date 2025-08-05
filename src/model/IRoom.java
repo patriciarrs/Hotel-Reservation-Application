@@ -1,7 +1,7 @@
 package model;
 
 /**
- * A room interface. Implementations define getters.
+ * Represents the interface of a room.
  */
 public interface IRoom {
     String getNumber();

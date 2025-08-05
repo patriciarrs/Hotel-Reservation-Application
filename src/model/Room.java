@@ -3,7 +3,7 @@ package model;
 import java.util.Objects;
 
 /**
- * Represents a room in the hotel. Provides methods for getting properties.
+ * Represents the domain of a room. Models the data object for the hotel reservation application domain.
  */
 public class Room implements IRoom {
     private final String number;

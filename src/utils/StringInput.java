@@ -2,8 +2,6 @@ package utils;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class StringInput {
     private StringInput() {
@@ -55,39 +53,6 @@ public final class StringInput {
                 System.out.println(message);
 
                 return scanner.nextLine();
-            } catch (Exception e) {
-                System.out.println(e.getLocalizedMessage());
-            }
-        } while (true);
-    }
-
-    /**
-     * Get the user e-mail.
-     *
-     * @param scanner the text scanner input.
-     * @return the user e-mail.
-     * @throws NoSuchElementException   if no line is found on the scanner.
-     * @throws IllegalStateException    if the scanner is closed.
-     * @throws IllegalArgumentException if the e-mail format is invalid.
-     */
-    public static String getEmail(Scanner scanner)
-            throws NoSuchElementException, IllegalStateException, IllegalArgumentException {
-        do {
-            try {
-                System.out.println("Enter e-mail with format name@domain.com:");
-                String input = scanner.nextLine();
-
-                final String emailRegex = "^(.+)@(.+).(.+)$";
-                final Pattern pattern = Pattern.compile(emailRegex);
-                Matcher matcher = pattern.matcher(input);
-                boolean isEmailValid = matcher.matches();
-
-                if (!isEmailValid) {
-                    throw new IllegalArgumentException(
-                            "The e-mail should look like 'name@domain.extension' (e.g., user@example.com).");
-                }
-
-                return input;
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }

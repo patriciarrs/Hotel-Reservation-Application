@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 /**
- * Represents a customer reservation of a hotel room. Provides its properties.
+ * Represents the domain of a reservation. Models the data object for the hotel reservation application domain.
  */
 final public class Reservation {
     private final Customer customer;

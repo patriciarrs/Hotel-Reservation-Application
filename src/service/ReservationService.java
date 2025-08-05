@@ -1,9 +1,9 @@
 package service;
 
 import model.Customer;
+import model.Dates;
 import model.IRoom;
 import model.Reservation;
-import model.Room;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,27 +13,27 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Provides reservation-related operations such as adding, getting and reserving rooms, getting a customer reservations
- * and all reservations.
+ * Communicates with the resources, and other services, to build the business logic necessary to provide feedback to the
+ * UI.
  * <p>
- * This class is a singleton and should be accessed via {@link ReservationService#getInstance()}.
+ * Stateful service (remembers things for the project) that uses Collections to manage information. As such, there's
+ * only one of each service (Singleton).
  */
 final public class ReservationService {
     private static ReservationService instance;
+
+    private final CustomerService customerService;
 
     final private Map<String, List<Reservation>> roomNumberToReservations;
     final private Map<String, IRoom> roomNumberToRoom;
 
     private ReservationService() {
+        customerService = CustomerService.getInstance();
+
         roomNumberToReservations = new HashMap<>();
         roomNumberToRoom = new HashMap<>();
     }
 
-    /**
-     * Returns the singleton instance of {@code ReservationService}.
-     *
-     * @return the single instance of the service.
-     */
     public static ReservationService getInstance() {
         if (instance == null) {
             instance = new ReservationService();
@@ -42,17 +42,17 @@ final public class ReservationService {
         return instance;
     }
 
+    public Collection<Customer> getAllCustomers() {
+        return customerService.getAllCustomers();
+    }
+
     /**
      * Add a room to the roomNumberToRoom map.
      *
      * @param room the room.
      */
     public void addRoom(IRoom room) {
-        String number = room.getNumber();
-
-        Room newRoom = new Room(number, room.getPrice(), room.getType());
-
-        roomNumberToRoom.put(number, newRoom);
+        roomNumberToRoom.put(room.getNumber(), room);
     }
 
     /**
@@ -66,42 +66,30 @@ final public class ReservationService {
     }
 
     /**
-     * Get all rooms.
-     *
-     * @return all rooms.
-     */
-    public Collection<IRoom> getAllRooms() {
-        return roomNumberToRoom.values();
-    }
-
-    /**
      * Reserve a room.
      *
      * @param customer the customer that is reserving the room.
      * @param room     the room that is being reserved.
-     * @param checkIn  the check-in date for this reservation.
-     * @param checkOut the check-out date for this reservation.
+     * @param dates    the check-in and check-out dates for this reservation.
      * @return the reservation.
      */
-    public Reservation reserveRoom(Customer customer, IRoom room, LocalDate checkIn, LocalDate checkOut) {
-
-
-        return new Reservation(customer, room, checkIn, checkOut);
+    public Reservation reserveRoom(Customer customer, IRoom room, Dates dates) {
+        return new Reservation(customer, room, dates.checkIn(), dates.checkOut());
     }
 
     /**
      * Find the available rooms for the desired dates.
      *
-     * @param checkIn  check-in date.
-     * @param checkOut check-out date.
+     * @param dates the check-in and check-out dates for this reservation.
      * @return the available rooms for the desired dates.
      */
-    public Collection<IRoom> findAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
+    public Collection<IRoom> findAvailableRooms(Dates dates) {
         Collection<IRoom> availableRooms = new ArrayList<>();
 
         for (List<Reservation> roomReservations : roomNumberToReservations.values()) {
             for (Reservation reservation : roomReservations) {
-                boolean isBooked = isBooked(reservation.getCheckIn(), reservation.getCheckOut(), checkIn, checkOut);
+                boolean isBooked = isBooked(reservation.getCheckIn(), reservation.getCheckOut(), dates.checkIn(),
+                        dates.checkOut());
 
                 if (!isBooked) {
                     availableRooms.add(reservation.getRoom());
@@ -137,6 +125,36 @@ final public class ReservationService {
      */
     public void printAllReservations() {
         System.out.println(roomNumberToReservations);
+    }
+
+    /**
+     * Get all rooms.
+     *
+     * @return all rooms.
+     */
+    Collection<IRoom> getAllRooms() {
+        return roomNumberToRoom.values();
+    }
+
+    /**
+     * Get a customer.
+     *
+     * @param email the customer e-mail.
+     * @return a customer.
+     */
+    public Customer getCustomer(String email) {
+        return customerService.getCustomer(email);
+    }
+
+    /**
+     * Create a customer.
+     *
+     * @param email     the customer e-mail.
+     * @param firstName the customer first name.
+     * @param lastName  the customer last name.
+     */
+    public void createCustomer(String email, String firstName, String lastName) {
+        customerService.addCustomer(email, firstName, lastName);
     }
 
     /**

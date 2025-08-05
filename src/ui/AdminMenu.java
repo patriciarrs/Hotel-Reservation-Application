@@ -31,7 +31,8 @@ final public class AdminMenu {
                 2. See all Rooms
                 3. See all Reservations
                 4. Add a Room
-                5. Back to Main Menu
+                5. Add Test Data
+                6. Back to Main Menu
                 _______________________________________________
                 """);
 
@@ -58,7 +59,7 @@ final public class AdminMenu {
                 String input = scanner.nextLine();
                 int intInput = parseInt(input);
 
-                if (intInput < 1 || intInput > 5) {
+                if (intInput < 1 || intInput > 6) {
                     throw new IllegalArgumentException("Only numbers between 1 and 5 are allowed.");
                 }
 
@@ -78,6 +79,8 @@ final public class AdminMenu {
                         addARoom(scanner);
                         break;
                     case 5:
+                        addTestData();
+                    case 6:
                         MainMenu mainMenu = new MainMenu();
                         mainMenu.getMenu();
                         break;
@@ -91,6 +94,7 @@ final public class AdminMenu {
             }
         } while (!isInputValid);
     }
+
 
     /**
      * Admin Menu Option 1: See all customers.
@@ -135,10 +139,19 @@ final public class AdminMenu {
             RoomType type = getType(scanner);
 
             Room room = new Room(number, price, type);
+
             adminResource.addRoom(room);
 
             isAddingRoom = StringInput.getYesOrNo("Would you like to add a another room?", scanner);
         } while (isAddingRoom);
+    }
+
+    /**
+     * Admin Menu Option 5: Add test data (rooms and customers) for testing.
+     */
+    private void addTestData() {
+        System.out.println("Adding Rooms and Customer data for testing. Existing data will be overwritten.");
+        adminResource.addTestData();
     }
 
     /**
@@ -150,7 +163,8 @@ final public class AdminMenu {
      * @throws IllegalStateException    if the scanner is closed.
      * @throws IllegalArgumentException if the room number already exists.
      */
-    private String getNumber(Scanner scanner) throws IllegalArgumentException {
+    private String getNumber(Scanner scanner)
+            throws NoSuchElementException, IllegalStateException, IllegalArgumentException {
         do {
             try {
                 System.out.println("Enter room number:");

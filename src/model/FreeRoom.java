@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Represents a free room in the hotel.
+ * Represents the domain of a free room. Models the data object for the hotel reservation application domain.
  */
 final public class FreeRoom extends Room {
     /**
@@ -11,6 +11,7 @@ final public class FreeRoom extends Room {
      * @param type   the room type.
      */
     public FreeRoom(String number, RoomType type) {
+        // TODO?
         super(number, 0.0, type);
     }
 

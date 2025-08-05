@@ -10,9 +10,10 @@ import utils.DatesInput;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
-import static utils.StringInput.getEmail;
 import static utils.StringInput.getNoCustomValidationStringInput;
 import static utils.StringInput.getYesOrNo;
 
@@ -103,7 +104,7 @@ final public class MainMenu {
     private void findAndReserveARoom(Scanner scanner) {
         Dates dates = DatesInput.getDates(scanner);
 
-        Collection<IRoom> availableRooms = hotelResource.findAvailableRooms(dates.checkIn(), dates.checkOut());
+        Collection<IRoom> availableRooms = hotelResource.findAvailableRooms(dates);
 
         for (IRoom room : availableRooms) {
             System.out.println(room);
@@ -123,7 +124,7 @@ final public class MainMenu {
                 createAnAccount(scanner);
             }
         } else {
-            // TODO What happens if the user doesn't want to book?
+            getMenu();
         }
     }
 
@@ -204,7 +205,7 @@ final public class MainMenu {
 
                     IRoom room = hotelResource.getRoom(input);
 
-                    Reservation reservation = hotelResource.reserveRoom(email, room, dates.checkIn(), dates.checkOut());
+                    Reservation reservation = hotelResource.reserveRoom(email, room, dates);
 
                     System.out.println(reservation);
                 } catch (Exception e) {
@@ -231,5 +232,44 @@ final public class MainMenu {
         Customer customer = hotelResource.getCustomer(email);
 
         return customer != null;
+    }
+
+    /**
+     * Get the user e-mail.
+     *
+     * @param scanner the text scanner input.
+     * @return the user e-mail.
+     * @throws NoSuchElementException   if no line is found on the scanner.
+     * @throws IllegalStateException    if the scanner is closed.
+     * @throws IllegalArgumentException if the e-mail format is invalid or already in use.
+     */
+    private String getEmail(Scanner scanner)
+            throws NoSuchElementException, IllegalStateException, IllegalArgumentException {
+        do {
+            try {
+                System.out.println("Enter e-mail with format name@domain.com:");
+                String input = scanner.nextLine();
+
+                final String emailRegex = "^(.+)@(.+).(.+)$";
+                final Pattern pattern = Pattern.compile(emailRegex);
+                Matcher matcher = pattern.matcher(input);
+                boolean isEmailValid = matcher.matches();
+
+                if (!isEmailValid) {
+                    throw new IllegalArgumentException(
+                            "The e-mail should look like 'name@domain.extension' (e.g., user@example.com).");
+                }
+
+                Collection<Customer> customers = hotelResource.getAllCustomers();
+
+                if (customers.stream().anyMatch(customer -> input.equals(customer.getEmail()))) {
+                    throw new IllegalArgumentException("That customer e-mail is already in use.");
+                }
+
+                return input;
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+        } while (true);
     }
 }
