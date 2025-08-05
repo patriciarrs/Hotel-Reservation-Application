@@ -18,10 +18,9 @@ import java.util.Map;
  */
 final public class CustomerService {
     private static CustomerService instance;
-
     private final ReservationService reservationService;
 
-    Map<String, Customer> emailToCustomer;
+    private final Map<String, Customer> emailToCustomer;
 
     private CustomerService() {
         reservationService = ReservationService.getInstance();
@@ -98,14 +97,14 @@ final public class CustomerService {
      * Add test data (rooms and customers) for testing.
      */
     public void addTestData() {
-        addRoom(new Room("100", 120.00, RoomType.SINGLE));
-        addRoom(new Room("101", 130.00, RoomType.DOUBLE));
-        addRoom(new Room("102", 125.00, RoomType.SINGLE));
-        addRoom(new Room("103", 100.00, RoomType.DOUBLE));
-        addRoom(new Room("104", 145.00, RoomType.DOUBLE));
-        addRoom(new Room("105", 100.00, RoomType.SINGLE));
-        addRoom(new Room("106", 250.00, RoomType.DOUBLE));
-        addRoom(new Room("107", 0.00, RoomType.SINGLE));
+        addRoom(new Room("100", 120.0, RoomType.SINGLE));
+        addRoom(new Room("101", 130.0, RoomType.DOUBLE));
+        addRoom(new Room("102", 125.0, RoomType.SINGLE));
+        addRoom(new Room("103", 100.0, RoomType.DOUBLE));
+        addRoom(new Room("104", 145.0, RoomType.DOUBLE));
+        addRoom(new Room("105", 100.0, RoomType.SINGLE));
+        addRoom(new Room("106", 250.0, RoomType.DOUBLE));
+        addRoom(new Room("107", 0.0, RoomType.SINGLE));
 
         addCustomer("j@gmail.com", "Jeff", "Philips");
         addCustomer("mike@email.com", "Mike", "Philips");

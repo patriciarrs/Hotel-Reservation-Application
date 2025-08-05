@@ -17,7 +17,7 @@ import static java.lang.Integer.parseInt;
  * Admin menu for administrative functions.
  */
 final public class AdminMenu {
-    AdminResource adminResource = AdminResource.getInstance();
+    final AdminResource adminResource = AdminResource.getInstance();
 
     /**
      * Initialize the admin menu UI.

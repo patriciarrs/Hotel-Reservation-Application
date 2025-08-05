@@ -7,6 +7,7 @@ import model.IRoom;
 import model.Reservation;
 import utils.DatesInput;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -21,7 +22,7 @@ import static utils.StringInput.getYesOrNo;
  * Main menu for the users who want to book a room.
  */
 final public class MainMenu {
-    HotelResource hotelResource = HotelResource.getInstance();
+    final HotelResource hotelResource = HotelResource.getInstance();
 
     /**
      * Initialize the main menu UI.
@@ -106,6 +107,18 @@ final public class MainMenu {
 
         Collection<IRoom> availableRooms = hotelResource.findAvailableRooms(dates);
 
+        if (availableRooms.isEmpty()) {
+            LocalDate alternativeCheckIn = dates.checkIn().plusDays(7);
+            LocalDate alternativeCheckOut = dates.checkOut().plusDays(7);
+
+            availableRooms = hotelResource.findAvailableRooms(new Dates(alternativeCheckIn, alternativeCheckOut));
+        }
+
+        if (availableRooms.isEmpty()) {
+            System.out.println("No rooms available for the selected dates and for the following week.");
+            return;
+        }
+
         for (IRoom room : availableRooms) {
             System.out.println(room);
         }
@@ -123,8 +136,6 @@ final public class MainMenu {
             } else {
                 createAnAccount(scanner);
             }
-        } else {
-            getMenu();
         }
     }
 
@@ -205,9 +216,13 @@ final public class MainMenu {
 
                     IRoom room = hotelResource.getRoom(input);
 
-                    Reservation reservation = hotelResource.reserveRoom(email, room, dates);
+                    hotelResource.reserveRoom(email, room, dates);
 
-                    System.out.println(reservation);
+                    Collection<Reservation> reservations = hotelResource.getCustomersReservations(email);
+
+                    for (Reservation reservation : reservations) {
+                        System.out.println(reservation);
+                    }
                 } catch (Exception e) {
                     System.out.println(e.getLocalizedMessage());
                 }

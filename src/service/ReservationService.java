@@ -42,10 +42,6 @@ final public class ReservationService {
         return instance;
     }
 
-    public Collection<Customer> getAllCustomers() {
-        return customerService.getAllCustomers();
-    }
-
     /**
      * Add a room to the roomNumberToRoom map.
      *
@@ -137,6 +133,17 @@ final public class ReservationService {
     }
 
     /**
+     * Create a customer.
+     *
+     * @param email     the customer e-mail.
+     * @param firstName the customer first name.
+     * @param lastName  the customer last name.
+     */
+    public void createCustomer(String email, String firstName, String lastName) {
+        customerService.addCustomer(email, firstName, lastName);
+    }
+
+    /**
      * Get a customer.
      *
      * @param email the customer e-mail.
@@ -147,14 +154,12 @@ final public class ReservationService {
     }
 
     /**
-     * Create a customer.
+     * Get all customers.
      *
-     * @param email     the customer e-mail.
-     * @param firstName the customer first name.
-     * @param lastName  the customer last name.
+     * @return all customers.
      */
-    public void createCustomer(String email, String firstName, String lastName) {
-        customerService.addCustomer(email, firstName, lastName);
+    public Collection<Customer> getAllCustomers() {
+        return customerService.getAllCustomers();
     }
 
     /**

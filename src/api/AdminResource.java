@@ -27,17 +27,7 @@ final public class AdminResource {
 
         return instance;
     }
-
-    /**
-     * Get a customer by e-mail.
-     *
-     * @param email the customer e-mail.
-     * @return the customer.
-     */
-    public Customer getCustomer(String email) {
-        return customerService.getCustomer(email);
-    }
-
+    
     /**
      * Add a room.
      *

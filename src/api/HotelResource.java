@@ -30,10 +30,6 @@ final public class HotelResource {
         return instance;
     }
 
-    public Collection<Customer> getAllCustomers() {
-        return reservationService.getAllCustomers();
-    }
-
     /**
      * Get a customer.
      *
@@ -71,12 +67,11 @@ final public class HotelResource {
      * @param email the customer e-mail.
      * @param room  the room.
      * @param dates the check-in and check-out dates for this reservation.
-     * @return the reservation.
      */
-    public Reservation reserveRoom(String email, IRoom room, Dates dates) {
+    public void reserveRoom(String email, IRoom room, Dates dates) {
         Customer customer = getCustomer(email);
-        // TODO pass just email?
-        return reservationService.reserveRoom(customer, room, dates);
+
+        reservationService.reserveRoom(customer, room, dates);
     }
 
     /**
@@ -87,7 +82,7 @@ final public class HotelResource {
      */
     public Collection<Reservation> getCustomersReservations(String email) {
         Customer customer = getCustomer(email);
-        // TODO pass just email?
+
         return reservationService.getCustomerReservations(customer);
     }
 
@@ -99,5 +94,14 @@ final public class HotelResource {
      */
     public Collection<IRoom> findAvailableRooms(Dates dates) {
         return reservationService.findAvailableRooms(dates);
+    }
+
+    /**
+     * Get all rooms.
+     *
+     * @return all rooms.
+     */
+    public Collection<Customer> getAllCustomers() {
+        return reservationService.getAllCustomers();
     }
 }

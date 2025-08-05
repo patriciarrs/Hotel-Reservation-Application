@@ -40,7 +40,7 @@ public class Room implements IRoom {
 
     @Override
     final public boolean isFree() {
-        return true; // TODO?
+        return true;
     }
 
     @Override
@@ -59,6 +59,9 @@ public class Room implements IRoom {
     @Override
     public String toString() {
         String roomType = type.equals(RoomType.SINGLE) ? "Single" : "Double";
-        return "Room number: " + number + "; " + roomType + " bed room; Price: $" + price + ".";
+
+        String formattedPrice = price == 0 ? "Free" : "$" + price;
+
+        return "Room number: " + number + "; " + roomType + " bed room; Price: " + formattedPrice + ".";
     }
 }
