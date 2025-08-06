@@ -66,10 +66,26 @@ final public class AdminResource {
     }
 
     /**
-     * Add test data (rooms and customers) for testing.
+     * Add test data (rooms, customers and reservations).
      */
     public void addTestData() {
-        reservationService.addTestData();
         customerService.addTestData();
+
+        Customer customer1 = getCustomer("j@gmail.com");
+        Customer customer2 = getCustomer("mike@email.com");
+
+        Customer[] customers = {customer1, customer2};
+
+        reservationService.addTestData(customers);
+    }
+
+    /**
+     * Get a customer by e-mail.
+     *
+     * @param email the customer e-mail.
+     * @return the customer.
+     */
+    private Customer getCustomer(String email) {
+        return customerService.getCustomer(email);
     }
 }

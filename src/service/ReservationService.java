@@ -66,7 +66,8 @@ final public class ReservationService {
      * @param dates    the check-in and check-out dates for this reservation.
      */
     public void reserveRoom(Customer customer, IRoom room, Dates dates) {
-        new Reservation(customer, room, dates.checkIn(), dates.checkOut());
+        List<Reservation> roomReservations = roomNumberToReservations.get(room.getNumber());
+        roomReservations.add(new Reservation(customer, room, dates.checkIn(), dates.checkOut()));
     }
 
     /**
@@ -129,9 +130,9 @@ final public class ReservationService {
     }
 
     /**
-     * Add rooms test data for testing.
+     * Add rooms and reservations test data.
      */
-    public void addTestData() {
+    public void addTestData(Customer[] customers) {
         addRoom(new Room("100", 120.0, RoomType.SINGLE));
         addRoom(new Room("101", 130.0, RoomType.DOUBLE));
         addRoom(new Room("102", 125.0, RoomType.SINGLE));
@@ -140,8 +141,12 @@ final public class ReservationService {
         addRoom(new Room("105", 100.0, RoomType.SINGLE));
         addRoom(new Room("106", 250.0, RoomType.DOUBLE));
         addRoom(new Room("107", 0.0, RoomType.SINGLE));
-    }
 
+        reserveRoom(customers[0], roomNumberToRoom.get("100"),
+                new Dates(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15)));
+        reserveRoom(customers[1], roomNumberToRoom.get("101"),
+                new Dates(LocalDate.of(2026, 1, 16), LocalDate.of(2026, 1, 31)));
+    }
 
     /**
      * Check if the room is already booked for the desired dates.

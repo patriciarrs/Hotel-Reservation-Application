@@ -62,7 +62,7 @@ final public class CustomerService {
     }
 
     /**
-     * Add customers test data for testing.
+     * Add customers test data.
      */
     public void addTestData() {
         addCustomer("j@gmail.com", "Jeff", "Philips");
