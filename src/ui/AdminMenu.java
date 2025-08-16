@@ -50,6 +50,8 @@ final public class AdminMenu {
      */
     private void handleMenuOptionSelections(Scanner scanner)
             throws NoSuchElementException, IllegalStateException, NumberFormatException, IllegalArgumentException {
+        String errorMessage = "Only numbers between 1 and 6 are allowed.";
+
         boolean isInputValid;
 
         do {
@@ -60,7 +62,7 @@ final public class AdminMenu {
                 int intInput = parseInt(input);
 
                 if (intInput < 1 || intInput > 6) {
-                    throw new IllegalArgumentException("Only numbers between 1 and 5 are allowed.");
+                    throw new IllegalArgumentException(errorMessage);
                 }
 
                 isInputValid = true;
@@ -87,8 +89,10 @@ final public class AdminMenu {
                 }
 
                 getMenu(scanner);
+            } catch (NumberFormatException e) {
+                System.out.println(errorMessage);
+                isInputValid = false;
             } catch (Exception e) {
-                // TODO confirm what message is shown when IllegalArgumentException
                 System.out.println(e.getLocalizedMessage());
                 isInputValid = false;
             }

@@ -66,8 +66,14 @@ final public class ReservationService {
      * @param dates    the check-in and check-out dates for this reservation.
      */
     public void reserveRoom(Customer customer, IRoom room, Dates dates) {
-        List<Reservation> roomReservations = roomNumberToReservations.get(room.getNumber());
-        roomReservations.add(new Reservation(customer, room, dates.checkIn(), dates.checkOut()));
+        List<Reservation> previousReservations = roomNumberToReservations.get(room.getNumber());
+
+        List<Reservation> reservations =
+                previousReservations == null ? new ArrayList<>() : new ArrayList<>(previousReservations);
+
+        reservations.add(new Reservation(customer, room, dates.checkIn(), dates.checkOut()));
+
+        roomNumberToReservations.put(room.getNumber(), reservations);
     }
 
     /**
@@ -157,10 +163,14 @@ final public class ReservationService {
         addRoom(new Room("106", 250.0, RoomType.DOUBLE));
         addRoom(new Room("107", 0.0, RoomType.SINGLE));
 
+        System.out.println("Rooms: " + roomNumberToRoom);
+
         reserveRoom(customers[0], roomNumberToRoom.get("100"),
                 new Dates(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15)));
         reserveRoom(customers[1], roomNumberToRoom.get("101"),
                 new Dates(LocalDate.of(2026, 1, 16), LocalDate.of(2026, 1, 31)));
+
+        System.out.println("Reservations: " + roomNumberToReservations);
     }
 
     /**

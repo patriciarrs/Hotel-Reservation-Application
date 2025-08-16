@@ -70,5 +70,7 @@ final public class CustomerService {
         addCustomer("shaun@email.com", "Shaun", "Philips");
         addCustomer("sally@email.com", "Sally", "Philips");
         addCustomer("cesar@email.com", "Cesar", "Philips");
+
+        System.out.println("Customers: " + emailToCustomer);
     }
 }
