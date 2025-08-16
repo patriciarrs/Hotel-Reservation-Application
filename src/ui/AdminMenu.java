@@ -226,7 +226,7 @@ final public class AdminMenu {
      * @throws NoSuchElementException   if no line is found on the scanner.
      * @throws IllegalStateException    if the scanner is closed.
      * @throws NumberFormatException    if the input is not a parsable integer.
-     * @throws IllegalArgumentException if the selected option in not 1 or 2.
+     * @throws IllegalArgumentException if the selected option is not 1 or 2.
      */
     private RoomType getType(Scanner scanner)
             throws NoSuchElementException, IllegalStateException, NumberFormatException, IllegalArgumentException {

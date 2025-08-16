@@ -105,17 +105,16 @@ final public class MainMenu {
     private void findAndReserveARoom(Scanner scanner) {
         Dates dates = DatesInput.getDates(scanner);
 
-        Collection<IRoom> availableRooms = hotelResource.findAvailableRooms(dates);
+        String roomSearchType = getRoomSearchType(scanner);
+
+        Collection<IRoom> availableRooms = hotelResource.findAvailableRooms(dates, roomSearchType);
 
         if (availableRooms.isEmpty()) {
-            LocalDate alternativeCheckIn = dates.checkIn().plusDays(7);
-            LocalDate alternativeCheckOut = dates.checkOut().plusDays(7);
-
-            availableRooms = hotelResource.findAvailableRooms(new Dates(alternativeCheckIn, alternativeCheckOut));
+            availableRooms = getAvailableRooms(dates, scanner, roomSearchType);
         }
 
         if (availableRooms.isEmpty()) {
-            System.out.println("No rooms available for the selected dates and for the following week.");
+            System.out.println("No rooms available for the selected dates and search type.");
             return;
         }
 
@@ -282,6 +281,74 @@ final public class MainMenu {
                 }
 
                 return input;
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+        } while (true);
+    }
+
+    /**
+     * Get the available rooms for alternative check-in and check-out dates chosen by the user.
+     *
+     * @param dates          the original desired check-in and check-out dates.
+     * @param scanner        the text scanner input.
+     * @param roomSearchType the room search type - A (all rooms), P (only paid room) or F (only free rooms).
+     * @return the available rooms.
+     * @throws NoSuchElementException   if no line is found on the scanner.
+     * @throws IllegalStateException    if the scanner is closed.
+     * @throws NumberFormatException    if the input is not a parsable integer.
+     * @throws IllegalArgumentException if the selected option not a positive or negative integer.
+     */
+    private Collection<IRoom> getAvailableRooms(Dates dates, Scanner scanner, String roomSearchType)
+            throws NoSuchElementException, IllegalStateException, NumberFormatException, IllegalArgumentException {
+        System.out.println("No rooms available for the selected dates.");
+        System.out.println(
+                "Enter how many days out the room recommendation should search: (e.g., 7 to search 7 days later or -7 to search 7 days earlier)");
+
+        do {
+            try {
+                String input = scanner.nextLine();
+                int intInput = parseInt(input);
+
+                if (intInput == 0) {
+                    throw new IllegalArgumentException("Only positive or negative integers are allowed.");
+                }
+
+                LocalDate alternativeCheckIn = dates.checkIn().plusDays(intInput);
+                LocalDate alternativeCheckOut = dates.checkOut().plusDays(intInput);
+
+                Dates alternativeDates = new Dates(alternativeCheckIn, alternativeCheckOut);
+
+                return hotelResource.findAvailableRooms(alternativeDates, roomSearchType);
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+        } while (true);
+    }
+
+    /**
+     * Get the room search type - A (all rooms), P (only paid room) or F (only free rooms).
+     *
+     * @param scanner the text scanner input.
+     * @return the room search type - A (all rooms), P (only paid room) or F (only free rooms).
+     * @throws NoSuchElementException   if no line is found on the scanner.
+     * @throws IllegalStateException    if the scanner is closed.
+     * @throws IllegalArgumentException if the input is not A, P or F (case-insensitive).
+     */
+    private String getRoomSearchType(Scanner scanner)
+            throws NoSuchElementException, IllegalStateException, IllegalArgumentException {
+        System.out.println("Would you like to search for all rooms (a), only paid rooms (p) or only free rooms (f)?");
+
+        do {
+            try {
+                String input = scanner.nextLine();
+
+                if (!input.equalsIgnoreCase("a") && !input.equalsIgnoreCase("p") && !input.equalsIgnoreCase("f")) {
+                    throw new IllegalArgumentException(
+                            "Please enter A (all rooms), P (only paid room) or F (only free rooms):");
+                }
+
+                return input.toUpperCase();
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }

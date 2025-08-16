@@ -73,19 +73,34 @@ final public class ReservationService {
     /**
      * Find the available rooms for the desired dates.
      *
-     * @param dates the check-in and check-out dates for this reservation.
+     * @param dates          the check-in and check-out dates for this reservation.
+     * @param roomSearchType the room search type - A (all rooms), P (only paid room) or F (only free rooms).
      * @return the available rooms for the desired dates.
      */
-    public Collection<IRoom> findAvailableRooms(Dates dates) {
+    public Collection<IRoom> findAvailableRooms(Dates dates, String roomSearchType) {
         Collection<IRoom> availableRooms = new ArrayList<>();
+        Collection<IRoom> rooms = roomNumberToRoom.values();
 
-        for (List<Reservation> roomReservations : roomNumberToReservations.values()) {
-            for (Reservation reservation : roomReservations) {
-                boolean isBooked = isBooked(reservation.getCheckIn(), reservation.getCheckOut(), dates.checkIn(),
-                        dates.checkOut());
+        Collection<IRoom> searchTypeRooms = switch (roomSearchType) {
+            case "P" -> rooms.stream().filter(room -> !room.isFree()).toList();
+            case "F" -> rooms.stream().filter(IRoom::isFree).toList();
+            default -> rooms;
+        };
 
-                if (!isBooked) {
-                    availableRooms.add(reservation.getRoom());
+        List<String> searchTypeRoomNumbers =
+                searchTypeRooms.stream().map(IRoom::getNumber).toList();
+
+        for (String searchTypeRoomNumber : searchTypeRoomNumbers) {
+            List<Reservation> roomReservations = roomNumberToReservations.get(searchTypeRoomNumber);
+
+            if (roomReservations != null) {
+                for (Reservation reservation : roomReservations) {
+                    boolean isBooked = isBooked(reservation.getCheckIn(), reservation.getCheckOut(), dates.checkIn(),
+                            dates.checkOut());
+
+                    if (!isBooked) {
+                        availableRooms.add(reservation.getRoom());
+                    }
                 }
             }
         }

@@ -26,11 +26,11 @@ public final class StringInput {
             try {
                 String input = scanner.nextLine();
 
-                if (!input.equalsIgnoreCase("y") && !input.equalsIgnoreCase("n")) {
+                if (!input.equalsIgnoreCase("Y") && !input.equalsIgnoreCase("N")) {
                     throw new IllegalArgumentException("Please enter Y (Yes) or N (No):");
                 }
 
-                return input.equalsIgnoreCase("y");
+                return input.equalsIgnoreCase("Y");
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }

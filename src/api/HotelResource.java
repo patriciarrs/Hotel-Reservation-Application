@@ -92,11 +92,12 @@ final public class HotelResource {
     /**
      * Find the available rooms for reservation given the check-in and check-out dates.
      *
-     * @param dates the check-in and check-out dates for this reservation.
+     * @param dates          the check-in and check-out dates for this reservation.
+     * @param roomSearchType the room search type - A (all rooms), P (only paid room) or F (only free rooms).
      * @return the available rooms.
      */
-    public Collection<IRoom> findAvailableRooms(Dates dates) {
-        return reservationService.findAvailableRooms(dates);
+    public Collection<IRoom> findAvailableRooms(Dates dates, String roomSearchType) {
+        return reservationService.findAvailableRooms(dates, roomSearchType);
     }
 
     /**
