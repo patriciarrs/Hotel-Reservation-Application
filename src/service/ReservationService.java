@@ -10,6 +10,7 @@ import model.RoomType;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,15 +41,6 @@ final public class ReservationService {
     }
 
     /**
-     * Add a room to the roomNumberToRoom map.
-     *
-     * @param room the room.
-     */
-    public void addRoom(IRoom room) {
-        roomNumberToRoom.put(room.getNumber(), room);
-    }
-
-    /**
      * Get a room from the roomNumberToRoom map.
      *
      * @param roomNumber the room number
@@ -59,24 +51,6 @@ final public class ReservationService {
     }
 
     /**
-     * Reserve a room.
-     *
-     * @param customer the customer that is reserving the room.
-     * @param room     the room that is being reserved.
-     * @param dates    the check-in and check-out dates for this reservation.
-     */
-    public void reserveRoom(Customer customer, IRoom room, Dates dates) {
-        List<Reservation> previousReservations = roomNumberToReservations.get(room.getNumber());
-
-        List<Reservation> reservations =
-                previousReservations == null ? new ArrayList<>() : new ArrayList<>(previousReservations);
-
-        reservations.add(new Reservation(customer, room, dates.checkIn(), dates.checkOut()));
-
-        roomNumberToReservations.put(room.getNumber(), reservations);
-    }
-
-    /**
      * Find the available rooms for the desired dates.
      *
      * @param dates          the check-in and check-out dates for this reservation.
@@ -84,13 +58,13 @@ final public class ReservationService {
      * @return the available rooms for the desired dates.
      */
     public Collection<IRoom> findAvailableRooms(Dates dates, String roomSearchType) {
+        Collection<IRoom> allHotelRooms = roomNumberToRoom.values();
         Collection<IRoom> availableRooms = new ArrayList<>();
-        Collection<IRoom> rooms = roomNumberToRoom.values();
 
         Collection<IRoom> searchTypeRooms = switch (roomSearchType) {
-            case "P" -> rooms.stream().filter(room -> !room.isFree()).toList();
-            case "F" -> rooms.stream().filter(IRoom::isFree).toList();
-            default -> rooms;
+            case "P" -> allHotelRooms.stream().filter(room -> !room.isFree()).toList();
+            case "F" -> allHotelRooms.stream().filter(IRoom::isFree).toList();
+            default -> allHotelRooms;
         };
 
         List<String> searchTypeRoomNumbers =
@@ -99,10 +73,13 @@ final public class ReservationService {
         for (String searchTypeRoomNumber : searchTypeRoomNumbers) {
             List<Reservation> roomReservations = roomNumberToReservations.get(searchTypeRoomNumber);
 
-            if (roomReservations != null) {
+            if (roomReservations == null) {
+                availableRooms.add(roomNumberToRoom.get(searchTypeRoomNumber));
+            } else {
                 for (Reservation reservation : roomReservations) {
-                    boolean isBooked = isBooked(reservation.getCheckIn(), reservation.getCheckOut(), dates.checkIn(),
-                            dates.checkOut());
+                    boolean isBooked =
+                            checkIsBooked(reservation.getCheckIn(), reservation.getCheckOut(), dates.checkIn(),
+                                    dates.checkOut());
 
                     if (!isBooked) {
                         availableRooms.add(reservation.getRoom());
@@ -112,6 +89,20 @@ final public class ReservationService {
         }
 
         return availableRooms;
+    }
+
+    /**
+     * Check if the room is already booked for the desired dates.
+     *
+     * @param existingCheckIn  the existing reservation check-in date.
+     * @param existingCheckOut the existing reservation check-out date.
+     * @param desiredCheckIn   the desired reservation check-in date.
+     * @param desiredCheckOut  the desired reservation check-out date.
+     * @return true if the room is already booked for the desired dates.
+     */
+    private boolean checkIsBooked(LocalDate existingCheckIn, LocalDate existingCheckOut, LocalDate desiredCheckIn,
+                                  LocalDate desiredCheckOut) {
+        return existingCheckIn.isBefore(desiredCheckOut) && desiredCheckIn.isBefore(existingCheckOut);
     }
 
     /**
@@ -147,7 +138,7 @@ final public class ReservationService {
      * @return all rooms.
      */
     public Collection<IRoom> getAllRooms() {
-        return roomNumberToRoom.values();
+        return roomNumberToRoom.values().stream().sorted(Comparator.comparing(IRoom::getNumber)).toList();
     }
 
     /**
@@ -174,15 +165,29 @@ final public class ReservationService {
     }
 
     /**
-     * Check if the room is already booked for the desired dates.
+     * Add a room to the roomNumberToRoom map.
      *
-     * @param checkIn1  the existing reservation check-in date.
-     * @param checkOut1 the existing reservation check-out date.
-     * @param checkIn2  the desired reservation check-in date.
-     * @param checkOut2 the desired reservation check-out date.
-     * @return true if the room is already booked for the desired dates.
+     * @param room the room.
      */
-    private boolean isBooked(LocalDate checkIn1, LocalDate checkOut1, LocalDate checkIn2, LocalDate checkOut2) {
-        return checkIn1.isBefore(checkOut2) && checkIn2.isBefore(checkOut1);
+    public void addRoom(IRoom room) {
+        roomNumberToRoom.put(room.getNumber(), room);
+    }
+
+    /**
+     * Reserve a room.
+     *
+     * @param customer the customer that is reserving the room.
+     * @param room     the room that is being reserved.
+     * @param dates    the check-in and check-out dates for this reservation.
+     */
+    public void reserveRoom(Customer customer, IRoom room, Dates dates) {
+        List<Reservation> previousReservations = roomNumberToReservations.get(room.getNumber());
+
+        List<Reservation> reservations =
+                previousReservations == null ? new ArrayList<>() : new ArrayList<>(previousReservations);
+
+        reservations.add(new Reservation(customer, room, dates.checkIn(), dates.checkOut()));
+
+        roomNumberToReservations.put(room.getNumber(), reservations);
     }
 }

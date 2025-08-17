@@ -44,16 +44,16 @@ public class Room implements IRoom {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(number);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Room room = (Room) o;
         return Objects.equals(number, room.number);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(number);
     }
 
     @Override

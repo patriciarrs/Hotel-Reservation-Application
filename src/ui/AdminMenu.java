@@ -22,7 +22,7 @@ final public class AdminMenu {
     /**
      * Initialize the admin menu UI.
      */
-    public void getMenu(Scanner scanner) {
+    public void getAdminMenu(Scanner scanner) {
         System.out.println("""
                 
                 Admin Menu
@@ -84,11 +84,11 @@ final public class AdminMenu {
                         addTestData();
                     case 6:
                         MainMenu mainMenu = new MainMenu();
-                        mainMenu.getMenu();
+                        mainMenu.getMainMenu();
                         break;
                 }
 
-                getMenu(scanner);
+                getAdminMenu(scanner);
             } catch (NumberFormatException e) {
                 System.out.println(errorMessage);
                 isInputValid = false;
@@ -98,7 +98,6 @@ final public class AdminMenu {
             }
         } while (!isInputValid);
     }
-
 
     /**
      * Admin Menu Option 1: See all customers.
@@ -138,9 +137,9 @@ final public class AdminMenu {
         boolean isAddingRoom;
 
         do {
-            String number = getNumber(scanner);
-            double price = getPrice(scanner);
-            RoomType type = getType(scanner);
+            String number = getRoomNumberInput(scanner);
+            double price = getRoomPriceInput(scanner);
+            RoomType type = getRoomTypeInput(scanner);
 
             Room room = new Room(number, price, type);
 
@@ -159,7 +158,7 @@ final public class AdminMenu {
     }
 
     /**
-     * Get the room number.
+     * Get the room number input.
      *
      * @param scanner the text scanner input.
      * @return the room number.
@@ -167,7 +166,7 @@ final public class AdminMenu {
      * @throws IllegalStateException    if the scanner is closed.
      * @throws IllegalArgumentException if the room number already exists.
      */
-    private String getNumber(Scanner scanner)
+    private String getRoomNumberInput(Scanner scanner)
             throws NoSuchElementException, IllegalStateException, IllegalArgumentException {
         do {
             try {
@@ -188,7 +187,7 @@ final public class AdminMenu {
     }
 
     /**
-     * Get the room price per night.
+     * Get the room price per night input.
      *
      * @param scanner the text scanner input.
      * @return the room price per night.
@@ -198,7 +197,7 @@ final public class AdminMenu {
      * @throws NumberFormatException    if the price input is not a parsable double.
      * @throws IllegalArgumentException if the price input is not a positive double.
      */
-    private double getPrice(Scanner scanner)
+    private double getRoomPriceInput(Scanner scanner)
             throws NoSuchElementException, IllegalStateException, NullPointerException, NumberFormatException,
             IllegalArgumentException {
         String message = "Enter price per night:";
@@ -223,7 +222,7 @@ final public class AdminMenu {
     }
 
     /**
-     * Get the room type.
+     * Get the room type input.
      *
      * @param scanner the text scanner input.
      * @return the room type.
@@ -232,7 +231,7 @@ final public class AdminMenu {
      * @throws NumberFormatException    if the input is not a parsable integer.
      * @throws IllegalArgumentException if the selected option is not 1 or 2.
      */
-    private RoomType getType(Scanner scanner)
+    private RoomType getRoomTypeInput(Scanner scanner)
             throws NoSuchElementException, IllegalStateException, NumberFormatException, IllegalArgumentException {
         System.out.println("Enter room type (1 for single bed, 2 for double bed):");
 
