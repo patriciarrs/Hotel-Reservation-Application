@@ -1,8 +1,8 @@
 package model;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static utils.EmailInput.getValidatedEmail;
 
 /**
  * Represents the domain of a customer. Models the data object for the hotel reservation application domain.
@@ -18,23 +18,11 @@ final public class Customer {
      * @param firstName the customer first name.
      * @param lastName  the customer last name.
      * @param email     the customer e-mail.
-     * @throws IllegalArgumentException if the e-mail format is invalid.
      */
     public Customer(String firstName, String lastName, String email) throws IllegalArgumentException {
         this.firstName = firstName;
         this.lastName = lastName;
-
-        final String emailRegex = "^(.+)@(.+).(.+)$";
-        final Pattern pattern = Pattern.compile(emailRegex);
-        Matcher matcher = pattern.matcher(email);
-        boolean isEmailValid = matcher.matches();
-
-        if (!isEmailValid) {
-            throw new IllegalArgumentException(
-                    "The e-mail should look like 'name@domain.extension' (e.g., user@example.com).");
-        }
-
-        this.email = email;
+        this.email = getValidatedEmail(email);
     }
 
     public String getFirstName() {
@@ -44,9 +32,14 @@ final public class Customer {
     public String getLastName() {
         return lastName;
     }
-    
+
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(email);
     }
 
     @Override
@@ -55,11 +48,6 @@ final public class Customer {
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
         return Objects.equals(email, customer.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(email);
     }
 
     @Override

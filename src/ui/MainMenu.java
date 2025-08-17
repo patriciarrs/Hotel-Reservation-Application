@@ -11,10 +11,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
+import static utils.EmailInput.getEmailInput;
 import static utils.StringInput.getNoCustomValidationStringInput;
 import static utils.StringInput.getYesOrNo;
 
@@ -27,7 +26,7 @@ final public class MainMenu {
     /**
      * Initialize the main menu UI.
      */
-    public void getMenu() {
+    public void getMainMenu() {
         System.out.println("""
                 Welcome to the Hotel Reservation Application
                 
@@ -89,7 +88,7 @@ final public class MainMenu {
                         break;
                 }
 
-                getMenu();
+                getMainMenu();
             } catch (NumberFormatException e) {
                 System.out.println(errorMessage);
                 isInputValid = false;
@@ -118,7 +117,7 @@ final public class MainMenu {
 
         if (availableRooms.isEmpty()) {
             System.out.println("No rooms available for the selected dates and search type.");
-            return;
+            getMainMenu();
         }
 
         for (IRoom room : availableRooms) {
@@ -130,14 +129,15 @@ final public class MainMenu {
         if (isBooking) {
             boolean hasAccountAccordingToUser = getYesOrNo("Do you have an account with us?", scanner);
 
+            String email;
             if (hasAccountAccordingToUser) {
-                String email = getEmail(scanner);
-                reserveRoom(email, scanner, availableRooms, dates);
-
-                getAdminMenu(scanner);
+                email = getExistingEmailInput(scanner);
             } else {
-                createAnAccount(scanner);
+                email = createAnAccount(scanner);
             }
+
+            reserveRoom(email, scanner, availableRooms, dates);
+            getMainMenu();
         }
     }
 
@@ -147,7 +147,7 @@ final public class MainMenu {
      * @param scanner the text scanner input.
      */
     private void seeMyReservations(Scanner scanner) {
-        String email = getEmail(scanner);
+        String email = getExistingEmailInput(scanner);
 
         Collection<Reservation> reservations = hotelResource.getCustomersReservations(email);
 
@@ -165,7 +165,7 @@ final public class MainMenu {
 
         do {
             try {
-                String email = getEmail(scanner);
+                String email = getNewEmailInput(scanner);
                 String firstName = getNoCustomValidationStringInput("Enter first name:", scanner);
                 String lastName = getNoCustomValidationStringInput("Enter last name:", scanner);
 
@@ -185,105 +185,32 @@ final public class MainMenu {
      */
     private void getAdminMenu(Scanner scanner) {
         AdminMenu adminMenu = new AdminMenu();
-        adminMenu.getMenu(scanner);
+        adminMenu.getAdminMenu(scanner);
     }
 
     /**
-     * Reserve a room from the available rooms.
-     *
-     * @param email          the customer e-mail.
-     * @param scanner        the text scanner input.
-     * @param availableRooms the available rooms for the desired dates.
-     * @param dates          the desired check-in and check-out dates.
-     * @throws NoSuchElementException   if no line is found on the scanner.
-     * @throws IllegalStateException    if the scanner is closed.
-     * @throws IllegalArgumentException if the input is not a free room.
-     */
-    private void reserveRoom(String email, Scanner scanner, Collection<IRoom> availableRooms, Dates dates) {
-        boolean hasAccountAccordingToSystem = hasAccountAccordingToSystem(email);
-
-        if (hasAccountAccordingToSystem) {
-            boolean isValidRoom = false;
-
-            do {
-                try {
-                    System.out.println("What room number would you like to reserve?");
-                    String input = scanner.nextLine();
-
-                    isValidRoom = availableRooms.stream().anyMatch(room -> room.getNumber().equals(input));
-
-                    if (!isValidRoom) {
-                        throw new IllegalArgumentException("Only the room numbers displayed above are allowed.");
-                    }
-
-                    IRoom room = hotelResource.getRoom(input);
-
-                    hotelResource.reserveRoom(email, room, dates);
-
-                    Collection<Reservation> reservations = hotelResource.getCustomersReservations(email);
-
-                    for (Reservation reservation : reservations) {
-                        System.out.println(reservation);
-                    }
-                } catch (Exception e) {
-                    System.out.println(e.getLocalizedMessage());
-                }
-            } while (!isValidRoom);
-        } else {
-            System.out.println(
-                    "Account not found. Please create an account with us to conclude booking.");
-
-            String newAccountEmail = createAnAccount(scanner);
-
-            reserveRoom(newAccountEmail, scanner, availableRooms, dates);
-        }
-    }
-
-    /**
-     * Check if the user has an account in the system.
-     *
-     * @param email the user e-mail.
-     * @return true if the user has an account in the system.
-     */
-    private boolean hasAccountAccordingToSystem(String email) {
-        Customer customer = hotelResource.getCustomer(email);
-
-        return customer != null;
-    }
-
-    /**
-     * Get the user e-mail.
+     * Get the room search type - A (all rooms), P (only paid room) or F (only free rooms).
      *
      * @param scanner the text scanner input.
-     * @return the user e-mail.
+     * @return the room search type - A (all rooms), P (only paid room) or F (only free rooms).
      * @throws NoSuchElementException   if no line is found on the scanner.
      * @throws IllegalStateException    if the scanner is closed.
-     * @throws IllegalArgumentException if the e-mail format is invalid or already in use.
+     * @throws IllegalArgumentException if the input is not A, P or F (case-insensitive).
      */
-    private String getEmail(Scanner scanner)
+    private String getRoomSearchType(Scanner scanner)
             throws NoSuchElementException, IllegalStateException, IllegalArgumentException {
+        System.out.println("Would you like to search for all rooms (a), only paid rooms (p) or only free rooms (f)?");
+
         do {
             try {
-                System.out.println("Enter e-mail with format name@domain.com:");
                 String input = scanner.nextLine();
 
-                final String emailRegex = "^(.+)@(.+).(.+)$";
-                final Pattern pattern = Pattern.compile(emailRegex);
-                Matcher matcher = pattern.matcher(input);
-                boolean isEmailValid = matcher.matches();
-
-                if (!isEmailValid) {
+                if (!input.equalsIgnoreCase("a") && !input.equalsIgnoreCase("p") && !input.equalsIgnoreCase("f")) {
                     throw new IllegalArgumentException(
-                            "The e-mail should look like 'name@domain.extension' (e.g., user@example.com).");
+                            "Please enter A (all rooms), P (only paid room) or F (only free rooms):");
                 }
 
-                Collection<Customer> customers = hotelResource.getAllCustomers();
-
-                if (customers.stream().anyMatch(customer -> input.equals(customer.getEmail()))) {
-                    throw new IllegalArgumentException("That customer e-mail is already in use.");
-                }
-
-                return input;
+                return input.toUpperCase();
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }
@@ -330,31 +257,114 @@ final public class MainMenu {
     }
 
     /**
-     * Get the room search type - A (all rooms), P (only paid room) or F (only free rooms).
+     * Get an existing user e-mail input.
      *
      * @param scanner the text scanner input.
-     * @return the room search type - A (all rooms), P (only paid room) or F (only free rooms).
+     * @return the user e-mail.
      * @throws NoSuchElementException   if no line is found on the scanner.
      * @throws IllegalStateException    if the scanner is closed.
-     * @throws IllegalArgumentException if the input is not A, P or F (case-insensitive).
+     * @throws IllegalArgumentException if the e-mail format is invalid or already in use.
      */
-    private String getRoomSearchType(Scanner scanner)
+    private String getExistingEmailInput(Scanner scanner)
             throws NoSuchElementException, IllegalStateException, IllegalArgumentException {
-        System.out.println("Would you like to search for all rooms (a), only paid rooms (p) or only free rooms (f)?");
-
         do {
             try {
-                String input = scanner.nextLine();
-
-                if (!input.equalsIgnoreCase("a") && !input.equalsIgnoreCase("p") && !input.equalsIgnoreCase("f")) {
-                    throw new IllegalArgumentException(
-                            "Please enter A (all rooms), P (only paid room) or F (only free rooms):");
-                }
-
-                return input.toUpperCase();
+                return getEmailInput(scanner);
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }
         } while (true);
     }
+
+    /**
+     * Get a new user e-mail input.
+     *
+     * @param scanner the text scanner input.
+     * @return the user e-mail.
+     * @throws NoSuchElementException   if no line is found on the scanner.
+     * @throws IllegalStateException    if the scanner is closed.
+     * @throws IllegalArgumentException if the e-mail format is invalid or already in use.
+     */
+    private String getNewEmailInput(Scanner scanner)
+            throws NoSuchElementException, IllegalStateException, IllegalArgumentException {
+        do {
+            try {
+                String emailInput = getEmailInput(scanner);
+
+                Collection<Customer> customers = hotelResource.getAllCustomers();
+
+                if (customers.stream().anyMatch(customer -> emailInput.equals(customer.getEmail()))) {
+                    throw new IllegalArgumentException("That customer e-mail is already in use.");
+                }
+
+                return emailInput;
+            } catch (Exception e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+        } while (true);
+    }
+
+    /**
+     * Reserve a room from the available rooms.
+     *
+     * @param email          the customer e-mail.
+     * @param scanner        the text scanner input.
+     * @param availableRooms the available rooms for the desired dates.
+     * @param dates          the desired check-in and check-out dates.
+     * @throws NoSuchElementException   if no line is found on the scanner.
+     * @throws IllegalStateException    if the scanner is closed.
+     * @throws IllegalArgumentException if the input is not a free room.
+     */
+    private void reserveRoom(String email, Scanner scanner, Collection<IRoom> availableRooms, Dates dates) {
+        boolean hasAccountAccordingToSystem = checkHasAccountAccordingToSystem(email);
+
+        if (hasAccountAccordingToSystem) {
+            boolean isValidRoom = false;
+
+            do {
+                try {
+                    System.out.println("What room number would you like to reserve?");
+                    String input = scanner.nextLine();
+
+                    isValidRoom = availableRooms.stream().anyMatch(room -> room.getNumber().equals(input));
+
+                    if (!isValidRoom) {
+                        throw new IllegalArgumentException("Only the room numbers displayed above are allowed.");
+                    }
+
+                    IRoom room = hotelResource.getRoom(input);
+
+                    hotelResource.reserveRoom(email, room, dates);
+
+                    Collection<Reservation> reservations = hotelResource.getCustomersReservations(email);
+
+                    for (Reservation reservation : reservations) {
+                        System.out.println(reservation);
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getLocalizedMessage());
+                }
+            } while (!isValidRoom);
+        } else {
+            System.out.println(
+                    "Account not found. Please create an account with us to conclude booking.");
+
+            String newAccountEmail = createAnAccount(scanner);
+
+            reserveRoom(newAccountEmail, scanner, availableRooms, dates);
+        }
+    }
+
+    /**
+     * Check if the user has an account in the system.
+     *
+     * @param email the user e-mail.
+     * @return true if the user has an account in the system.
+     */
+    private boolean checkHasAccountAccordingToSystem(String email) {
+        Customer customer = hotelResource.getCustomer(email);
+
+        return customer != null;
+    }
+
 }
