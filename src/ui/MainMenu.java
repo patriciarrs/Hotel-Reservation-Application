@@ -72,21 +72,11 @@ final public class MainMenu {
                 isInputValid = true;
 
                 switch (intInput) {
-                    case 1:
-                        findAndReserveARoom(scanner);
-                        break;
-                    case 2:
-                        seeMyReservations(scanner);
-                        break;
-                    case 3:
-                        createAnAccount(scanner);
-                        break;
-                    case 4:
-                        getAdminMenu(scanner);
-                        break;
-                    case 5:
-                        scanner.close();
-                        break;
+                    case 1 -> findAndReserveARoom(scanner);
+                    case 2 -> seeMyReservations(scanner);
+                    case 3 -> createAnAccount(scanner);
+                    case 4 -> getAdminMenu(scanner);
+                    case 5 -> scanner.close();
                 }
 
                 getMainMenu();
@@ -113,7 +103,8 @@ final public class MainMenu {
         List<IRoom> availableRooms = hotelResource.findAvailableRooms(dates, roomSearchType);
 
         if (availableRooms.isEmpty()) {
-            availableRooms = getAvailableRooms(dates, scanner, roomSearchType);
+            dates = getAlternativeDates(dates, scanner);
+            availableRooms = hotelResource.findAvailableRooms(dates, roomSearchType);
         }
 
         if (availableRooms.isEmpty()) {
@@ -218,18 +209,17 @@ final public class MainMenu {
     }
 
     /**
-     * Get the available rooms for alternative check-in and check-out dates chosen by the user.
+     * Get the alternative check-in and check-out dates chosen by the user.
      *
-     * @param dates          the original desired check-in and check-out dates.
-     * @param scanner        the text scanner input.
-     * @param roomSearchType the room search type - A (all rooms), P (only paid room) or F (only free rooms).
-     * @return the available rooms.
+     * @param dates   the original desired check-in and check-out dates.
+     * @param scanner the text scanner input.
+     * @return the alternative dates.
      * @throws NoSuchElementException   if no line is found on the scanner.
      * @throws IllegalStateException    if the scanner is closed.
      * @throws NumberFormatException    if the input is not a parsable integer.
      * @throws IllegalArgumentException if the selected option not a positive or negative integer.
      */
-    private List<IRoom> getAvailableRooms(Dates dates, Scanner scanner, String roomSearchType)
+    private Dates getAlternativeDates(Dates dates, Scanner scanner)
             throws NoSuchElementException, IllegalStateException, NumberFormatException, IllegalArgumentException {
         System.out.println("No rooms available for the selected dates.");
         System.out.println(
@@ -247,9 +237,7 @@ final public class MainMenu {
                 LocalDate alternativeCheckIn = dates.checkIn().plusDays(intInput);
                 LocalDate alternativeCheckOut = dates.checkOut().plusDays(intInput);
 
-                Dates alternativeDates = new Dates(alternativeCheckIn, alternativeCheckOut);
-
-                return hotelResource.findAvailableRooms(alternativeDates, roomSearchType);
+                return new Dates(alternativeCheckIn, alternativeCheckOut);
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }
@@ -366,5 +354,4 @@ final public class MainMenu {
 
         return customer != null;
     }
-
 }

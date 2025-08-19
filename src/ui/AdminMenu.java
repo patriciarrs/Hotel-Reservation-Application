@@ -69,24 +69,15 @@ final public class AdminMenu {
                 isInputValid = true;
 
                 switch (intInput) {
-                    case 1:
-                        seeAllCustomers();
-                        break;
-                    case 2:
-                        seeAllRooms();
-                        break;
-                    case 3:
-                        seeAllReservations();
-                        break;
-                    case 4:
-                        addARoom(scanner);
-                        break;
-                    case 5:
-                        addTestData();
-                    case 6:
+                    case 1 -> seeAllCustomers();
+                    case 2 -> seeAllRooms();
+                    case 3 -> seeAllReservations();
+                    case 4 -> addARoom(scanner);
+                    case 5 -> addTestData();
+                    case 6 -> {
                         MainMenu mainMenu = new MainMenu();
                         mainMenu.getMainMenu();
-                        break;
+                    }
                 }
 
                 getAdminMenu(scanner);

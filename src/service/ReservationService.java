@@ -58,17 +58,8 @@ final public class ReservationService {
      * @return the available rooms for the desired dates.
      */
     public List<IRoom> findAvailableRooms(Dates dates, String roomSearchType) {
-        Collection<IRoom> allHotelRooms = roomNumberToRoom.values();
+        List<String> searchTypeRoomNumbers = getSearchTypeRoomNumbers(roomSearchType);
         List<IRoom> availableRooms = new ArrayList<>();
-
-        Collection<IRoom> searchTypeRooms = switch (roomSearchType) {
-            case "P" -> allHotelRooms.stream().filter(room -> !room.isFree()).toList();
-            case "F" -> allHotelRooms.stream().filter(IRoom::isFree).toList();
-            default -> allHotelRooms;
-        };
-
-        List<String> searchTypeRoomNumbers =
-                searchTypeRooms.stream().map(IRoom::getNumber).toList();
 
         for (String searchTypeRoomNumber : searchTypeRoomNumbers) {
             List<Reservation> roomReservations = roomNumberToReservations.get(searchTypeRoomNumber);
@@ -89,6 +80,24 @@ final public class ReservationService {
         }
 
         return availableRooms;
+    }
+
+    /**
+     * Get the room numbers based on the search type.
+     *
+     * @param roomSearchType the room search type - A (all rooms), P (only paid room) or F (only free rooms).
+     * @return the room numbers.
+     */
+    private List<String> getSearchTypeRoomNumbers(String roomSearchType) {
+        Collection<IRoom> allHotelRooms = roomNumberToRoom.values();
+
+        Collection<IRoom> searchTypeRooms = switch (roomSearchType) {
+            case "P" -> allHotelRooms.stream().filter(room -> !room.isFree()).toList();
+            case "F" -> allHotelRooms.stream().filter(IRoom::isFree).toList();
+            default -> allHotelRooms;
+        };
+
+        return searchTypeRooms.stream().map(IRoom::getNumber).toList();
     }
 
     /**
