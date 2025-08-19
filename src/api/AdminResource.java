@@ -6,6 +6,7 @@ import service.CustomerService;
 import service.ReservationService;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * API to the UI intended for the hotel staff only.
@@ -45,7 +46,7 @@ final public class AdminResource {
      *
      * @return all rooms.
      */
-    public Collection<IRoom> getAllRooms() {
+    public List<IRoom> getAllRooms() {
         return reservationService.getAllRooms();
     }
 

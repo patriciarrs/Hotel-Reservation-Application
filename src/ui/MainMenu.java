@@ -9,6 +9,7 @@ import utils.DatesInput;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -109,7 +110,7 @@ final public class MainMenu {
 
         String roomSearchType = getRoomSearchType(scanner);
 
-        Collection<IRoom> availableRooms = hotelResource.findAvailableRooms(dates, roomSearchType);
+        List<IRoom> availableRooms = hotelResource.findAvailableRooms(dates, roomSearchType);
 
         if (availableRooms.isEmpty()) {
             availableRooms = getAvailableRooms(dates, scanner, roomSearchType);
@@ -117,7 +118,7 @@ final public class MainMenu {
 
         if (availableRooms.isEmpty()) {
             System.out.println("No rooms available for the selected dates and search type.");
-            getMainMenu();
+            return;
         }
 
         for (IRoom room : availableRooms) {
@@ -137,7 +138,6 @@ final public class MainMenu {
             }
 
             reserveRoom(email, scanner, availableRooms, dates);
-            getMainMenu();
         }
     }
 
@@ -149,7 +149,7 @@ final public class MainMenu {
     private void seeMyReservations(Scanner scanner) {
         String email = getExistingEmailInput(scanner);
 
-        Collection<Reservation> reservations = hotelResource.getCustomersReservations(email);
+        List<Reservation> reservations = hotelResource.getCustomersReservations(email);
 
         for (Reservation reservation : reservations) {
             System.out.println(reservation);
@@ -229,7 +229,7 @@ final public class MainMenu {
      * @throws NumberFormatException    if the input is not a parsable integer.
      * @throws IllegalArgumentException if the selected option not a positive or negative integer.
      */
-    private Collection<IRoom> getAvailableRooms(Dates dates, Scanner scanner, String roomSearchType)
+    private List<IRoom> getAvailableRooms(Dates dates, Scanner scanner, String roomSearchType)
             throws NoSuchElementException, IllegalStateException, NumberFormatException, IllegalArgumentException {
         System.out.println("No rooms available for the selected dates.");
         System.out.println(
@@ -315,7 +315,7 @@ final public class MainMenu {
      * @throws IllegalStateException    if the scanner is closed.
      * @throws IllegalArgumentException if the input is not a free room.
      */
-    private void reserveRoom(String email, Scanner scanner, Collection<IRoom> availableRooms, Dates dates) {
+    private void reserveRoom(String email, Scanner scanner, List<IRoom> availableRooms, Dates dates) {
         boolean hasAccountAccordingToSystem = checkHasAccountAccordingToSystem(email);
 
         if (hasAccountAccordingToSystem) {
@@ -336,7 +336,7 @@ final public class MainMenu {
 
                     hotelResource.reserveRoom(email, room, dates);
 
-                    Collection<Reservation> reservations = hotelResource.getCustomersReservations(email);
+                    List<Reservation> reservations = hotelResource.getCustomersReservations(email);
 
                     for (Reservation reservation : reservations) {
                         System.out.println(reservation);

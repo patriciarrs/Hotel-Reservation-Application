@@ -8,6 +8,7 @@ import model.RoomType;
 import utils.StringInput;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -114,7 +115,7 @@ final public class AdminMenu {
      * Admin Menu Option 2: See all rooms.
      */
     private void seeAllRooms() {
-        Collection<IRoom> rooms = adminResource.getAllRooms();
+        List<IRoom> rooms = adminResource.getAllRooms();
 
         for (IRoom room : rooms) {
             System.out.println(room);
@@ -173,7 +174,7 @@ final public class AdminMenu {
                 System.out.println("Enter room number:");
                 String input = scanner.nextLine();
 
-                Collection<IRoom> rooms = adminResource.getAllRooms();
+                List<IRoom> rooms = adminResource.getAllRooms();
 
                 if (rooms.stream().anyMatch(room -> input.equals(room.getNumber()))) {
                     throw new IllegalArgumentException("That room number is already in use.");

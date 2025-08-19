@@ -57,9 +57,9 @@ final public class ReservationService {
      * @param roomSearchType the room search type - A (all rooms), P (only paid room) or F (only free rooms).
      * @return the available rooms for the desired dates.
      */
-    public Collection<IRoom> findAvailableRooms(Dates dates, String roomSearchType) {
+    public List<IRoom> findAvailableRooms(Dates dates, String roomSearchType) {
         Collection<IRoom> allHotelRooms = roomNumberToRoom.values();
-        Collection<IRoom> availableRooms = new ArrayList<>();
+        List<IRoom> availableRooms = new ArrayList<>();
 
         Collection<IRoom> searchTypeRooms = switch (roomSearchType) {
             case "P" -> allHotelRooms.stream().filter(room -> !room.isFree()).toList();
@@ -111,8 +111,8 @@ final public class ReservationService {
      * @param customer the customer.
      * @return the customer reservations.
      */
-    public Collection<Reservation> getCustomerReservations(Customer customer) {
-        Collection<Reservation> customerReservations = new ArrayList<>();
+    public List<Reservation> getCustomerReservations(Customer customer) {
+        List<Reservation> customerReservations = new ArrayList<>();
 
         for (List<Reservation> roomReservation : roomNumberToReservations.values()) {
             for (Reservation reservation : roomReservation) {
@@ -137,7 +137,7 @@ final public class ReservationService {
      *
      * @return all rooms.
      */
-    public Collection<IRoom> getAllRooms() {
+    public List<IRoom> getAllRooms() {
         return roomNumberToRoom.values().stream().sorted(Comparator.comparing(IRoom::getNumber)).toList();
     }
 

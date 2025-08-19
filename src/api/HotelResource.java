@@ -8,6 +8,7 @@ import service.CustomerService;
 import service.ReservationService;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * API to the UI intended for public usage.
@@ -31,16 +32,6 @@ final public class HotelResource {
             instance = new HotelResource();
         }
         return instance;
-    }
-
-    /**
-     * Get a customer.
-     *
-     * @param email the customer e-mail.
-     * @return the customer.
-     */
-    public Customer getCustomer(String email) {
-        return customerService.getCustomer(email);
     }
 
     /**
@@ -78,12 +69,22 @@ final public class HotelResource {
     }
 
     /**
+     * Get a customer.
+     *
+     * @param email the customer e-mail.
+     * @return the customer.
+     */
+    public Customer getCustomer(String email) {
+        return customerService.getCustomer(email);
+    }
+
+    /**
      * Get the customer reservations (based on his e-mail).
      *
      * @param email the customer e-mail.
      * @return the customer reservations.
      */
-    public Collection<Reservation> getCustomersReservations(String email) {
+    public List<Reservation> getCustomersReservations(String email) {
         Customer customer = getCustomer(email);
 
         return reservationService.getCustomerReservations(customer);
@@ -96,7 +97,7 @@ final public class HotelResource {
      * @param roomSearchType the room search type - A (all rooms), P (only paid room) or F (only free rooms).
      * @return the available rooms.
      */
-    public Collection<IRoom> findAvailableRooms(Dates dates, String roomSearchType) {
+    public List<IRoom> findAvailableRooms(Dates dates, String roomSearchType) {
         return reservationService.findAvailableRooms(dates, roomSearchType);
     }
 
