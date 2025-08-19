@@ -8,7 +8,6 @@ import model.Reservation;
 import utils.DatesInput;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -279,7 +278,7 @@ final public class MainMenu {
             try {
                 String emailInput = getEmailInput(scanner);
 
-                Collection<Customer> customers = hotelResource.getAllCustomers();
+                List<Customer> customers = hotelResource.getAllCustomers();
 
                 if (customers.stream().anyMatch(customer -> emailInput.equals(customer.getEmail()))) {
                     throw new IllegalArgumentException("That customer e-mail is already in use.");

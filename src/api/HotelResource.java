@@ -7,7 +7,6 @@ import model.Reservation;
 import service.CustomerService;
 import service.ReservationService;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -106,7 +105,7 @@ final public class HotelResource {
      *
      * @return all rooms.
      */
-    public Collection<Customer> getAllCustomers() {
+    public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 }

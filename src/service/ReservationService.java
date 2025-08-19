@@ -9,7 +9,6 @@ import model.RoomType;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -89,9 +88,9 @@ final public class ReservationService {
      * @return the room numbers.
      */
     private List<String> getSearchTypeRoomNumbers(String roomSearchType) {
-        Collection<IRoom> allHotelRooms = roomNumberToRoom.values();
+        List<IRoom> allHotelRooms = roomNumberToRoom.values().stream().toList();
 
-        Collection<IRoom> searchTypeRooms = switch (roomSearchType) {
+        List<IRoom> searchTypeRooms = switch (roomSearchType) {
             case "P" -> allHotelRooms.stream().filter(room -> !room.isFree()).toList();
             case "F" -> allHotelRooms.stream().filter(IRoom::isFree).toList();
             default -> allHotelRooms;

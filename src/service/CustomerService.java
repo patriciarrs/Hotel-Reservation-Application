@@ -2,8 +2,8 @@ package service;
 
 import model.Customer;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,19 +30,6 @@ final public class CustomerService {
     }
 
     /**
-     * Add a customer.
-     *
-     * @param email     the customer e-mail.
-     * @param firstName the customer first name.
-     * @param lastName  the customer last name.
-     */
-    public void addCustomer(String email, String firstName, String lastName) {
-        Customer customer = new Customer(firstName, lastName, email);
-
-        emailToCustomer.put(email, customer);
-    }
-
-    /**
      * Get a customer.
      *
      * @param email the customer e-mail.
@@ -57,8 +44,8 @@ final public class CustomerService {
      *
      * @return all customers.
      */
-    public Collection<Customer> getAllCustomers() {
-        return emailToCustomer.values();
+    public List<Customer> getAllCustomers() {
+        return emailToCustomer.values().stream().toList();
     }
 
     /**
@@ -72,5 +59,18 @@ final public class CustomerService {
         addCustomer("cesar@email.com", "Cesar", "Philips");
 
         System.out.println("Customers: " + emailToCustomer);
+    }
+
+    /**
+     * Add a customer.
+     *
+     * @param email     the customer e-mail.
+     * @param firstName the customer first name.
+     * @param lastName  the customer last name.
+     */
+    public void addCustomer(String email, String firstName, String lastName) {
+        Customer customer = new Customer(firstName, lastName, email);
+
+        emailToCustomer.put(email, customer);
     }
 }

@@ -7,7 +7,6 @@ import model.Room;
 import model.RoomType;
 import utils.StringInput;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -95,7 +94,7 @@ final public class AdminMenu {
      * Admin Menu Option 1: See all customers.
      */
     private void seeAllCustomers() {
-        Collection<Customer> customers = adminResource.getAllCustomers();
+        List<Customer> customers = adminResource.getAllCustomers();
 
         for (Customer customer : customers) {
             System.out.println(customer);

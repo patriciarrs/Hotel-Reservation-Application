@@ -5,7 +5,6 @@ import model.IRoom;
 import service.CustomerService;
 import service.ReservationService;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -55,7 +54,7 @@ final public class AdminResource {
      *
      * @return all customers.
      */
-    public Collection<Customer> getAllCustomers() {
+    public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
