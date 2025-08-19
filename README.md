@@ -1,4 +1,4 @@
-# Hotel Reservation Application (Udacity Java Programming Nanodegree)
+# Hotel Reservation Application
 
 In this project, I designed and implemented a Java hotel reservation application.
 
